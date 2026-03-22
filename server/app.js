@@ -9,7 +9,7 @@ import apiRouter from './src/routes.js';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 app.use(helmet());
 
@@ -21,6 +21,8 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
+app.set('trust proxy', 1)
+
 // Auth: 10 requests per minute
 const authLimiter = rateLimit({
   windowMs: 60 * 1000,
@@ -28,6 +30,11 @@ const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: 'Too many requests, please try again later',
+  keyGenerator: (req) => {
+    const clientIp = req.ip.replace(/:\d+$/, '');
+    return clientIp;
+  },
+  validate: { xForwardedForHeader: false, keyGeneratorIpFallback: false },
 });
 
 // API: 30 requests per 5 seconds
@@ -37,6 +44,11 @@ const apiLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: 'Too many requests, please try again later',
+  keyGenerator: (req) => {
+    const clientIp = req.ip.replace(/:\d+$/, '');
+    return clientIp;
+  },
+  validate: { xForwardedForHeader: false, keyGeneratorIpFallback: false },
 });
 
 app.use('/auth', authLimiter, authRouter);

@@ -17,12 +17,23 @@ const loginLimiter = rateLimit({
   windowMs: 30 * 1000, // 30 seconds
   max: 5, // 5 login attempts
   message: 'Too many login attempts, please try again later',
+  keyGenerator: (req) => {
+    // Some proxies append port numbers to the IP address (e.g., 172.71.26.130:10272)
+    const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    return typeof ip === 'string' ? ip.replace(/:\d+$/, '') : 'unknown';
+  },
+  validate: { xForwardedForHeader: false, keyGeneratorIpFallback: false },
 });
 
 const registerLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
   max: 10, // 10 registration attempts
   message: 'Too many registration attempts, please try again later',
+  keyGenerator: (req) => {
+    const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    return typeof ip === 'string' ? ip.replace(/:\d+$/, '') : 'unknown';
+  },
+  validate: { xForwardedForHeader: false, keyGeneratorIpFallback: false },
 });
 
 router.use(

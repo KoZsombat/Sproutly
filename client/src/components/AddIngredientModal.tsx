@@ -35,6 +35,8 @@ export default function AddIngredientModal({
     protein: string;
     carbs: string;
     fat: string;
+    displayAsMeal?: boolean;
+    mealGrams?: string;
   }) => void;
   editMode: boolean;
   apiUrl: string;
@@ -42,6 +44,8 @@ export default function AddIngredientModal({
   onLogout: () => void;
 }) {
   const { t } = useTranslation();
+  const [displayAsMeal, setDisplayAsMeal] = useState(false);
+  const [mealGrams, setMealGrams] = useState('100');
   const [alertMsg, setAlertMsg] = useState<string | null>(null);
   const [alertType, setAlertType] = useState<'success' | 'error'>('error');
   const [localName, setLocalName] = useState(name);
@@ -509,6 +513,36 @@ export default function AddIngredientModal({
             </div>
           </div>
         </div>
+        {/* Display as meal checkbox és gramm input a gombok felett */}
+        <div className="mt-4">
+          <div className="flex items-center">
+            <input
+              id="displayAsMeal"
+              type="checkbox"
+              checked={displayAsMeal}
+              onChange={() => setDisplayAsMeal((v) => !v)}
+              className="mr-2"
+            />
+            <label htmlFor="displayAsMeal" className="text-sm text-gray-700">
+              {t('ingredient.displayAsMeal')}
+            </label>
+          </div>
+          {displayAsMeal && (
+            <div className="flex items-center mt-2">
+              <label htmlFor="mealGrams" className="text-sm text-gray-700 mr-2">
+                {t('ingredient.mealGrams')}
+              </label>
+              <input
+                id="mealGrams"
+                type="number"
+                min="1"
+                className="border rounded px-2 py-1 w-24"
+                value={mealGrams}
+                onChange={e => setMealGrams(e.target.value.replace(/[^0-9]/g, ''))}
+              />
+            </div>
+          )}
+        </div>
         <div className={`mt-4 sm:mt-8 flex gap-2 sm:gap-3 flex-col sm:flex-row justify-center`}>
           <button
             className={
@@ -533,6 +567,8 @@ export default function AddIngredientModal({
                 protein: localProtein,
                 carbs: localCarbs,
                 fat: localFat,
+                displayAsMeal,
+                mealGrams: displayAsMeal ? mealGrams : undefined,
               });
             }}
           >

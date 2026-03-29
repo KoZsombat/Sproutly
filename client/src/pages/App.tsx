@@ -67,9 +67,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
   const [mealName, setMealName] = useState('');
   const [activeItem, setActiveItem] = useState('');
   const [mealGrams, setMealGrams] = useState('0');
-  const [selectedIngredients, setSelectedIngredients] = useState<{ name: string; grams: string }[]>(
-    []
-  );
+  const [selectedIngredients, setSelectedIngredients] = useState<{ name: string; grams: string }[]>([]);
   const [editMealOldName, setEditMealOldName] = useState<string | null>(null);
   const [editMealMode, setEditMealMode] = useState(false);
   const [editMealName, setEditMealName] = useState('');
@@ -354,7 +352,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     name: string,
     ingredients: { name: string; grams: string }[]
   ) => {
-    const filtered = ingredients.filter((i) => parseFloat(i.grams) > 0);
+    const filtered = ingredients.filter((i) => i.grams !== '' && parseFloat(i.grams) > 0);
     if (editMealMode && editMealOldName !== null) {
       const mealId =
         typeof editMealOldName === 'string' ? parseInt(editMealOldName, 10) : editMealOldName;
@@ -384,12 +382,15 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     setEditName(null);
   };
 
+  // Új: Ingredient hozzáadásánál "display as meal" opció
   const handleAddIngredientModalAdd = (ingredient: {
     name: string;
     calories: string;
     protein: string;
     carbs: string;
     fat: string;
+    displayAsMeal?: boolean;
+    mealGrams?: string;
   }) => {
     if (editMode && editName !== null) {
       const id = typeof editName === 'string' ? parseInt(editName, 10) : editName;
@@ -398,6 +399,11 @@ export default function App({ onLogout }: { onLogout: () => void }) {
       setEditName(null);
     } else {
       AddIngredient(ingredient);
+      if (ingredient.displayAsMeal) {
+        // Létrehozunk egy mealt is ugyanezzel a névvel és 1 ingredienttel, a megadott grammal
+        const grams = ingredient.mealGrams && ingredient.mealGrams !== '' ? ingredient.mealGrams : '100';
+        AddMeal(ingredient.name, [`${ingredient.name}:${grams}`]);
+      }
     }
     toggleTab('addIngredient')();
   };
@@ -607,8 +613,10 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     Eaten.forEach((e) => {
       const meal = cals.find((c) => c.name === e.name);
       if (!meal) return;
-
-      meal.food.forEach((item) => {
+      meal.food.forEach((item, idx) => {
+        // Csak akkor számoljuk, ha van gramm érték
+        const grams = meal.grams && meal.grams[idx] !== '' ? meal.grams[idx] : null;
+        if (!grams) return;
         const foodItem = food.find((f) => f.name === item);
         if (foodItem) {
           const factor = parseFloat(e.grams) / 100;

@@ -74,7 +74,9 @@
     "successUpdate": "Ingredient updated successfully!",
     "successAdd": "Ingredient added successfully!",
     "saveChanges": "Save Changes",
-    "addIngredient": "Add Ingredient"
+    "addIngredient": "Add Ingredient",
+    "displayAsMeal": "Display as meal (add as meal too)",
+    "mealGrams": "How many grams is one serving?"
   },
   "meal": {
     "editTitle": "Edit Meal",

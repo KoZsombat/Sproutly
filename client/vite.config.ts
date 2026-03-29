@@ -11,9 +11,10 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      workbox: {
-        maximumFileSizeToCacheInBytes: 11 * 1024 * 1024,
-      },
+      injectRegister: 'auto',
+	  workbox: {
+		maximumFileSizeToCacheInBytes: 15 * 1024 * 1024,
+	  },
       manifest: {
         name: 'Nutrition App',
         short_name: 'NutritionApp',
@@ -23,12 +24,12 @@ export default defineConfig({
         theme_color: '#3a3a3c',
         icons: [
           {
-            src: 'pwa-192x192.png',
+            src: '/pwa-192x192.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: 'pwa-512x512.png',
+            src: '/pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
           },

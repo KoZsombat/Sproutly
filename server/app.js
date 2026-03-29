@@ -21,7 +21,7 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
-app.set('trust proxy', 1)
+app.set('trust proxy', 1);
 
 // Auth: 10 requests per minute
 const authLimiter = rateLimit({

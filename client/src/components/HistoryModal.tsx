@@ -16,18 +16,17 @@ export default function History({
 
   if (!visible) return null;
 
-  // Helpers to work with local (timezone-agnostic) dates
   function toLocalDateKey(d: string | number | Date) {
     const date = new Date(d);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`; // YYYY-MM-DD in local time
+    return `${year}-${month}-${day}`;
   }
 
   function parseLocalDate(dateStr: string) {
     const [y, m, d] = dateStr.split('-').map(Number);
-    return new Date(y, (m || 1) - 1, d || 1); // Local midnight
+    return new Date(y, (m || 1) - 1, d || 1);
   }
 
   function formatLocalDate(dateStr: string) {
@@ -35,11 +34,10 @@ export default function History({
     return d.toLocaleDateString();
   }
 
-  // Group entries by date and sum macros for each day
   function groupByDate(entries: EatenHistory[]) {
     const grouped: { [date: string]: EatenHistory } = {};
     for (const entry of entries) {
-      const dateKey = toLocalDateKey(entry.date); // YYYY-MM-DD (local)
+      const dateKey = toLocalDateKey(entry.date);
       if (!grouped[dateKey]) {
         grouped[dateKey] = {
           name: '',
@@ -55,34 +53,38 @@ export default function History({
       grouped[dateKey].carbs += entry.carbs;
       grouped[dateKey].fat += entry.fat;
     }
-    // Return as array, sorted descending by date
+
     return Object.values(grouped).sort((a, b) => b.date.localeCompare(a.date));
   }
 
   const groupedEatenData = groupByDate(eatenData || []);
 
-  // Streak logic: consecutive days with meal history
-  // Streak increases only if you log meals every day (within 24 hours)
-  // If you skip a day, streak resets to 0, but old meals remain in the list
   function calculateStreak(entries: EatenHistory[]) {
     if (!entries || entries.length === 0) return 0;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const entryDates = entries.map(e => {
+      const d = parseLocalDate(e.date);
+      d.setHours(0, 0, 0, 0);
+      return d.getTime();
+    });
+
+    let start = null;
+    if (entryDates.includes(today.getTime())) {
+      start = today.getTime();
+    } else if (entryDates.includes(yesterday.getTime())) {
+      start = yesterday.getTime();
+    } else {
+      return 0;
+    }
+
     let streak = 0;
-    let prevDate: Date | null = null;
-
-    for (let i = 0; i < entries.length; i++) {
-      const entry = entries[i];
-      const entryDate = parseLocalDate(entry.date);
-
-      if (prevDate) {
-        // Calculate difference in days
-        const diff = (prevDate.getTime() - entryDate.getTime()) / (1000 * 60 * 60 * 24);
-        // If more than 1 day has passed, streak breaks
-        if (diff > 1) break;
-      }
-
-      // Count this day in the streak
+    let current = start;
+    while (entryDates.includes(current)) {
       streak++;
-      prevDate = entryDate;
+      current -= 24 * 60 * 60 * 1000;
     }
     return streak;
   }
@@ -90,9 +92,9 @@ export default function History({
   const streak = calculateStreak(groupedEatenData);
 
   return (
-    <div className="overflow-y-auto overflow-x-hidden pb-[10vh] fixed inset-0 bg-gray-200 z-20 flex flex-col">
-      <div className="flex flex-row justify-between items-center px-3 sm:px-6 bg-white py-2 sm:py-4 border-b border-gray-200 flex-shrink-0">
-        <p className="text-3xl sm:text-4xl pt-5 font-bold text-gray-900">{t('history.title')}</p>
+    <div className="overflow-y-auto pb-[10vh] fixed pt-5 inset-0 bg-white z-20 overflow-hidden flex flex-col">
+      <div className="flex flex-row justify-between items-center px-3 sm:px-6 py-2 sm:py-4 border-b border-gray-200 bg-white flex-shrink-0">
+        <p className="text-3xl sm:text-4xl font-bold text-gray-900">{t('history.title')}</p>
         <button
           className="hover:bg-gray-100 rounded-lg p-2 transition-colors cursor-pointer"
           onClick={onClose}
@@ -101,41 +103,47 @@ export default function History({
           <IoCloseOutline size={28} color="#000" />
         </button>
       </div>
-      <div className="overflow-y-auto flex-1 p-4 sm:p-8 max-w-6xl mx-auto w-full">
-        <StreakDisplay streak={streak} />
+      <div className="overflow-y-auto flex-1 p-4 sm:p-8 max-w-4xl mx-auto w-full">
+        <div className="mb-6">
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-2xl shadow flex justify-center items-center p-8 sm:p-12">
+            <div className="flex flex-col items-center justify-center">
+              <StreakDisplay streak={streak} />
+            </div>
+          </div>
+        </div>
         {groupedEatenData.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16">
             <p className="text-lg text-gray-400 font-semibold">{t('history.noHistory')}</p>
           </div>
         ) : (
-          <div className="space-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {groupedEatenData.map((entry, index) => (
               <div
                 key={index}
-                className="bg-gray-50 rounded-xl shadow border border-gray-200 bg-white p-5 sm:p-7 flex flex-col gap-2"
+                className="bg-white rounded-xl shadow border border-gray-200 p-5 sm:p-7 flex flex-col gap-2"
               >
                 <div className="flex flex-row items-center gap-2 mb-2">
                   <span className="text-base font-bold text-gray-800 bg-gray-100 px-3 py-1 rounded-full uppercase tracking-wide shadow-sm">
                     {formatLocalDate(entry.date)}
                   </span>
                 </div>
-                <div className="flex flex-row flex-wrap gap-4 text-base text-gray-900 font-medium">
-                  <span>
-                    {t('stats.calories')}:{' '}
-                    <span className="font-extrabold text-gray-900">{entry.calories}</span>
-                  </span>
-                  <span>
-                    {t('stats.protein')}:{' '}
-                    <span className="font-extrabold text-gray-900">{entry.protein}g</span>
-                  </span>
-                  <span>
-                    {t('stats.carbs')}:{' '}
-                    <span className="font-extrabold text-gray-900">{entry.carbs}g</span>
-                  </span>
-                  <span>
-                    {t('stats.fat')}:{' '}
-                    <span className="font-extrabold text-gray-900">{entry.fat}g</span>
-                  </span>
+                <div className="grid grid-cols-2 gap-3 text-base text-gray-900 font-medium">
+                  <div className="rounded-lg bg-gray-100 px-3 py-2 flex flex-col items-center">
+                    <span className="text-xs text-gray-500">{t('stats.calories')}</span>
+                    <span className="font-extrabold text-gray-900 text-lg">{entry.calories}</span>
+                  </div>
+                  <div className="rounded-lg bg-gray-100 px-3 py-2 flex flex-col items-center">
+                    <span className="text-xs text-gray-500">{t('stats.protein')}</span>
+                    <span className="font-extrabold text-gray-900 text-lg">{entry.protein}g</span>
+                  </div>
+                  <div className="rounded-lg bg-gray-100 px-3 py-2 flex flex-col items-center">
+                    <span className="text-xs text-gray-500">{t('stats.carbs')}</span>
+                    <span className="font-extrabold text-gray-900 text-lg">{entry.carbs}g</span>
+                  </div>
+                  <div className="rounded-lg bg-gray-100 px-3 py-2 flex flex-col items-center">
+                    <span className="text-xs text-gray-500">{t('stats.fat')}</span>
+                    <span className="font-extrabold text-gray-900 text-lg">{entry.fat}g</span>
+                  </div>
                 </div>
               </div>
             ))}

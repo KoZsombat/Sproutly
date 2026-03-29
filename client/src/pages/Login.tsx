@@ -18,15 +18,12 @@ export default function Index() {
 
   useEffect(() => {
     const checkLoginStatus = async () => {
-      // check google/passowrd login validity
       try {
-        // Token a query-ből (Google login után)
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
         if (token) {
           localStorage.setItem('token', token);
           setlogged(true);
-          // Optionálisan: töröljük a query parametert
           window.history.replaceState({}, document.title, '/');
           return;
         }

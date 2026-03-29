@@ -5,7 +5,7 @@ export default function StreakDisplay({ streak }: { streak: number }) {
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-row items-center justify-center mx-3 my-2 sm:m-5 p-2 sm:p-3 shadow-sm rounded-xl bg-white gap-3 max-w-6xl mx-auto w-auto">
+    <div className="flex flex-row items-center justify-center w-full gap-6">
       {/* <div
         className="relative flex flex-col text-center justify-center"
         style={{ width: 150, height: 150 }}
@@ -25,9 +25,38 @@ export default function StreakDisplay({ streak }: { streak: number }) {
         </div>
         <p className="text-center text-sm mt-1">{percent.toFixed(1)}%</p>
       </div> */}
-      <div className="rounded overflow-hidden flex-1 left-0 flex flex-col justify-center items-center px-2">
-        <p className="text-lg sm:text-xl font-bold text-gray-900 mb-1">{t('history.yourStreak')}</p>
-        <p className="text-3xl sm:text-4xl font-extrabold text-orange-400 mb-1">{streak}</p>
+      <span
+        className="text-xl sm:text-3xl font-extrabold bg-gradient-to-r from-orange-400 to-pink-500 bg-clip-text text-transparent select-none"
+        style={{ minWidth: '120px', textAlign: 'right' }}
+      >
+        {t('history.yourStreak')}
+      </span>
+      <div
+        className="flex items-center justify-center"
+        style={{
+          background: 'linear-gradient(90deg, #ec4899 0%, #fde047 100%)',
+          borderRadius: '50%',
+          padding: '4px',
+          width: '6.7rem',
+          height: '6.7rem',
+        }}
+      >
+        <div
+          className="flex items-center justify-center bg-white rounded-full shadow-md"
+          style={{
+            width: '6.2rem',
+            height: '6.2rem',
+          }}
+        >
+          <span
+            className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-pink-500 to-yellow-400 bg-clip-text text-transparent"
+            style={{
+              backgroundImage: 'linear-gradient(90deg, #ec4899 0%, #fde047 100%)',
+            }}
+          >
+            {streak}
+          </span>
+        </div>
       </div>
     </div>
   );

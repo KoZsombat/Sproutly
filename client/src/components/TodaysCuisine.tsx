@@ -66,7 +66,6 @@ export default function TodaysCuisine({
               }
             });
 
-            //CAN EDIT OR DELETE HERE
             return (
               <div key={i} className="flex rounded-xl m-1.5 p-2 bg-[#f2f2f2ff] items-center">
                 <div className="flex-1">

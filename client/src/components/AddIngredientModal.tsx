@@ -169,7 +169,6 @@ export default function AddIngredientModal({
           !(item.calories === 0 && item.protein === 0 && item.carbs === 0 && item.fat === 0)
       );
 
-      // Add a fake id for compatibility, since API doesn't provide it
       const filteredWithId = filtered.map(
         (
           item: { name: string; calories: number; protein: number; carbs: number; fat: number },
@@ -177,23 +176,19 @@ export default function AddIngredientModal({
         ) => ({ ...item, id: `${item.name}-${idx}` })
       );
 
-      // Sort by relevance to search term
       const sortedByRelevance = filteredWithId.sort((a: { name: string }, b: { name: string }) => {
         const aName = a.name.toLowerCase();
         const bName = b.name.toLowerCase();
         const searchLower = search.toLowerCase();
 
-        // Exact match gets highest priority
         if (aName === searchLower) return -1;
         if (bName === searchLower) return 1;
 
-        // Starts with search term
         const aStartsWith = aName.startsWith(searchLower);
         const bStartsWith = bName.startsWith(searchLower);
         if (aStartsWith && !bStartsWith) return -1;
         if (!aStartsWith && bStartsWith) return 1;
 
-        // Contains search term (closer to start = higher priority)
         const aIndex = aName.indexOf(searchLower);
         const bIndex = bName.indexOf(searchLower);
         if (aIndex !== -1 && bIndex !== -1) {
@@ -202,13 +197,11 @@ export default function AddIngredientModal({
         if (aIndex !== -1) return -1;
         if (bIndex !== -1) return 1;
 
-        // Default: alphabetical
         return aName.localeCompare(bName);
       });
 
       allProducts = allProducts.concat(sortedByRelevance);
 
-      // Ensure allProducts only contains objects with id field
       setDbAll(
         allProducts as {
           id: string;
@@ -513,7 +506,6 @@ export default function AddIngredientModal({
             </div>
           </div>
         </div>
-        {/* Display as meal checkbox és gramm input a gombok felett */}
         <div className="mt-4">
           <div className="flex items-center">
             <input

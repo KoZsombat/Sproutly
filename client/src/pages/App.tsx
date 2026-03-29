@@ -382,7 +382,6 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     setEditName(null);
   };
 
-  // Új: Ingredient hozzáadásánál "display as meal" opció
   const handleAddIngredientModalAdd = (ingredient: {
     name: string;
     calories: string;
@@ -400,7 +399,6 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     } else {
       AddIngredient(ingredient);
       if (ingredient.displayAsMeal) {
-        // Létrehozunk egy mealt is ugyanezzel a névvel és 1 ingredienttel, a megadott grammal
         const grams = ingredient.mealGrams && ingredient.mealGrams !== '' ? ingredient.mealGrams : '100';
         AddMeal(ingredient.name, [`${ingredient.name}:${grams}`]);
       }
@@ -614,7 +612,6 @@ export default function App({ onLogout }: { onLogout: () => void }) {
       const meal = cals.find((c) => c.name === e.name);
       if (!meal) return;
       meal.food.forEach((item, idx) => {
-        // Csak akkor számoljuk, ha van gramm érték
         const grams = meal.grams && meal.grams[idx] !== '' ? meal.grams[idx] : null;
         if (!grams) return;
         const foodItem = food.find((f) => f.name === item);
@@ -635,8 +632,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
   }, [Eaten, food, cals]);
 
   return (
-    <div className="relative min-h-screen w-full overflow-x-hidden pb-[10vh]">
-      <Header onOpenSettings={toggleTab('settingsTab')} onLogout={onLogout} />
+    <div className="relative min-h-screen w-full overflow-x-hidden pb-[10vh] flex flex-col items-center">
       <SettingsModal
         visible={visibleTabs['settingsTab']}
         onClose={toggleTab('settingsTab')}
@@ -648,24 +644,27 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         nationality={userNationality}
         onUpdate={Update}
       />
-      <StatsDisplay
-        calories={calories}
-        protein={protein}
-        carbs={carbs}
-        fat={fat}
-        calorieMax={calorieMax}
-        proteinMax={proteinMax}
-        carbsMax={carbsMax}
-        fatMax={fatMax}
-      />
-      <TodaysCuisine
-        eaten={Eaten}
-        cals={cals}
-        food={food}
-        Clear={Clear}
-        onOpenAppend={toggleTab('appendFood')}
-        onDeleteEaten={handleDeleteEaten}
-      />
+      <div className='w-full lg:w-[80%]'>
+        <Header onOpenSettings={toggleTab('settingsTab')} onLogout={onLogout} />
+        <StatsDisplay
+          calories={calories}
+          protein={protein}
+          carbs={carbs}
+          fat={fat}
+          calorieMax={calorieMax}
+          proteinMax={proteinMax}
+          carbsMax={carbsMax}
+          fatMax={fatMax}
+        />
+        <TodaysCuisine
+          eaten={Eaten}
+          cals={cals}
+          food={food}
+          Clear={Clear}
+          onOpenAppend={toggleTab('appendFood')}
+          onDeleteEaten={handleDeleteEaten}
+        />
+      </div>
       <AppendFoodModal
         visible={visibleTabs['appendFood']}
         onClose={toggleTab('appendFood')}

@@ -67,7 +67,9 @@ export default function App({ onLogout }: { onLogout: () => void }) {
   const [mealName, setMealName] = useState('');
   const [activeItem, setActiveItem] = useState('');
   const [mealGrams, setMealGrams] = useState('0');
-  const [selectedIngredients, setSelectedIngredients] = useState<{ name: string; grams: string }[]>([]);
+  const [selectedIngredients, setSelectedIngredients] = useState<{ name: string; grams: string }[]>(
+    []
+  );
   const [editMealOldName, setEditMealOldName] = useState<string | null>(null);
   const [editMealMode, setEditMealMode] = useState(false);
   const [editMealName, setEditMealName] = useState('');
@@ -407,7 +409,8 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     } else {
       AddIngredient(ingredient);
       if (ingredient.displayAsMeal) {
-        const grams = ingredient.mealGrams && ingredient.mealGrams !== '' ? ingredient.mealGrams : '100';
+        const grams =
+          ingredient.mealGrams && ingredient.mealGrams !== '' ? ingredient.mealGrams : '100';
         AddMeal(ingredient.name, [`${ingredient.name}:${grams}`]);
       }
     }
@@ -660,7 +663,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         nationality={userNationality}
         onUpdate={Update}
       />
-      <div className='w-full lg:w-[80%]'>
+      <div className="w-full lg:w-[80%]">
         <Header onOpenSettings={toggleTab('settingsTab')} onLogout={onLogout} />
         <StatsDisplay
           calories={calories}

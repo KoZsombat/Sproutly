@@ -29,7 +29,9 @@
     "errorCarbsTooLarge": "Carbs must be less than or equal to 100000.",
     "errorFatPositive": "Fat must be a positive number.",
     "errorFatTooLarge": "Fat must be less than or equal to 100000.",
-    "errorNationalityRequired": "Nationality is required."
+    "errorNationalityRequired": "Nationality is required.",
+    "downloadTitle": "Install App",
+    "downloadText": "For quick access, add this app to your home screen. Look for the 'Add to Home Screen' or 'Install' option in your browser menu."
   },
   "stats": {
     "calories": "Calories",

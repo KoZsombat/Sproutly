@@ -65,7 +65,7 @@ export default function History({
     today.setHours(0, 0, 0, 0);
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
-    const entryDates = entries.map(e => {
+    const entryDates = entries.map((e) => {
       const d = parseLocalDate(e.date);
       d.setHours(0, 0, 0, 0);
       return d.getTime();

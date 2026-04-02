@@ -530,7 +530,7 @@ export default function AddIngredientModal({
                 min="1"
                 className="border rounded px-2 py-1 w-24"
                 value={mealGrams}
-                onChange={e => setMealGrams(e.target.value.replace(/[^0-9]/g, ''))}
+                onChange={(e) => setMealGrams(e.target.value.replace(/[^0-9]/g, ''))}
               />
             </div>
           )}

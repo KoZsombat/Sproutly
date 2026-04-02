@@ -99,6 +99,12 @@ export default function SettingsModal({
           <Alert message={alertMsg} type={alertType} onClose={() => setAlertMsg(null)} />
         )}
         <div className="mb-4 sm:mb-8">
+          <div className="bg-blue-100 w-full rounded-md border border-blue-300 px-3 py-2 mb-5">
+            <h2 className="text-lg font-semibold text-blue-800 mb-1">
+              {t('settings.downloadTitle')}
+            </h2>
+            <p className="text-sm text-blue-700">{t('settings.downloadText')}</p>
+          </div>
           <h2 className="text-base text-2xl font-semibold text-gray-900 mb-2 sm:mb-4">
             {t('settings.personalInfo')}
           </h2>

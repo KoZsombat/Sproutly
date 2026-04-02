@@ -106,9 +106,7 @@ export default function AddMealModal({
                 key={idx}
                 className="flex flex-row items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 rounded-lg border border-gray-200"
               >
-                <span className="flex-1 font-medium text-gray-700 text-sm">
-                  {ingredient.name}
-                </span>
+                <span className="flex-1 font-medium text-gray-700 text-sm">{ingredient.name}</span>
                 <input
                   type="numeric"
                   placeholder={t('common.grams')}

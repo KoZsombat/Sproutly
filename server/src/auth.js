@@ -18,7 +18,6 @@ const loginLimiter = rateLimit({
   max: 5, // 5 login attempts
   message: 'Too many login attempts, please try again later',
   keyGenerator: (req) => {
-    // Some proxies append port numbers to the IP address (e.g., 172.71.26.130:10272)
     const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     return typeof ip === 'string' ? ip.replace(/:\d+$/, '') : 'unknown';
   },
@@ -270,8 +269,6 @@ router.post('/verifyToken', verifyToken, (req, res) => {
 });
 
 router.post('/userInDb', verifyToken, (req, res) => {
-  // User already verified by verifyToken middleware
-  // If we reach here, user exists and token is valid
   return res.json({ exists: true });
 });
 

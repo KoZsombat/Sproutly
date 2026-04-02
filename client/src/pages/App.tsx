@@ -373,11 +373,19 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     setEditMealOldName(null);
     setEditMealName('');
     setEditMealIngredients([]);
-    toggleTab('addMeal')();
+    setVisibleTabs((prev) => ({
+      ...prev,
+      addMeal: false,
+      addFood: true,
+    }));
   };
 
   const handleAddIngredientModalClose = () => {
-    toggleTab('addIngredient')();
+    setVisibleTabs((prev) => ({
+      ...prev,
+      addIngredient: false,
+      addFood: true,
+    }));
     setEditMode(false);
     setEditName(null);
   };
@@ -403,11 +411,19 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         AddMeal(ingredient.name, [`${ingredient.name}:${grams}`]);
       }
     }
-    toggleTab('addIngredient')();
+    setVisibleTabs((prev) => ({
+      ...prev,
+      addIngredient: false,
+      addFood: true,
+    }));
   };
 
   const handleAddMealModalClose = () => {
-    toggleTab('addMeal')();
+    setVisibleTabs((prev) => ({
+      ...prev,
+      addMeal: false,
+      addFood: true,
+    }));
     setEditMealMode(false);
     setEditMealOldName(null);
     setEditMealName('');

@@ -52,6 +52,22 @@ export default function AddMealModal({
     return null;
   };
 
+  const sortedFood = [...food]
+    .filter((item) => item.name.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => {
+      if (editMode) {
+        const aIsSelected = localSelectedIngredients.some(
+          (i) => i.name === a.name && i.grams && parseFloat(i.grams) > 0
+        );
+        const bIsSelected = localSelectedIngredients.some(
+          (i) => i.name === b.name && i.grams && parseFloat(i.grams) > 0
+        );
+        if (aIsSelected && !bIsSelected) return -1;
+        if (!aIsSelected && bIsSelected) return 1;
+      }
+      return a.name.localeCompare(b.name);
+    });
+
   return (
     <div className="overflow-y-auto pb-[10vh] fixed pt-5 inset-0 bg-white z-20 overflow-hidden flex flex-col">
       <div className="flex flex-row justify-between items-center px-3 sm:px-6 py-2 sm:py-4 border-b border-gray-200 bg-white flex-shrink-0">
@@ -83,38 +99,36 @@ export default function AddMealModal({
           onChange={(e) => setSearch(e.target.value)}
         />
         <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
-          {food
-            .filter((item) => item.name.toLowerCase().includes(search.toLowerCase()))
-            .map((ingredient, idx) => {
-              const selected = localSelectedIngredients.find((i) => i.name === ingredient.name);
-              return (
-                <div
-                  key={idx}
-                  className="flex flex-row items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 rounded-lg border border-gray-200"
-                >
-                  <span className="flex-1 font-medium text-gray-700 text-sm">
-                    {ingredient.name}
-                  </span>
-                  <input
-                    type="numeric"
-                    placeholder={t('common.grams')}
-                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg w-20 sm:w-24 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    value={selected?.grams ?? ''}
-                    onChange={(e) => {
-                      const numeric = e.target.value.replace(/[^0-9]/g, '');
-                      setLocalSelectedIngredients((prev: { name: string; grams: string }[]) => {
-                        const exists = prev.find((i) => i.name === ingredient.name);
-                        if (exists)
-                          return prev.map((i) =>
-                            i.name === ingredient.name ? { ...i, grams: numeric } : i
-                          );
-                        return [...prev, { name: ingredient.name, grams: numeric }];
-                      });
-                    }}
-                  />
-                </div>
-              );
-            })}
+          {sortedFood.map((ingredient, idx) => {
+            const selected = localSelectedIngredients.find((i) => i.name === ingredient.name);
+            return (
+              <div
+                key={idx}
+                className="flex flex-row items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 rounded-lg border border-gray-200"
+              >
+                <span className="flex-1 font-medium text-gray-700 text-sm">
+                  {ingredient.name}
+                </span>
+                <input
+                  type="numeric"
+                  placeholder={t('common.grams')}
+                  className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg w-20 sm:w-24 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={selected?.grams ?? ''}
+                  onChange={(e) => {
+                    const numeric = e.target.value.replace(/[^0-9]/g, '');
+                    setLocalSelectedIngredients((prev: { name: string; grams: string }[]) => {
+                      const exists = prev.find((i) => i.name === ingredient.name);
+                      if (exists)
+                        return prev.map((i) =>
+                          i.name === ingredient.name ? { ...i, grams: numeric } : i
+                        );
+                      return [...prev, { name: ingredient.name, grams: numeric }];
+                    });
+                  }}
+                />
+              </div>
+            );
+          })}
         </div>
         <div className="flex gap-2 sm:gap-3">
           <button

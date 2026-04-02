@@ -46,7 +46,7 @@ router.get('/food', (req, res) => {
               .map((mf) => mf.food),
             grams: mealFoodRows
               .filter((mf) => mf.meal === meal.name)
-              .map((mf) => mf.grams),
+              .map((mf) => String(mf.grams)),
           }));
           resolve(meals);
         });

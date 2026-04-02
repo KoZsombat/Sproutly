@@ -473,7 +473,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     }
   };
 
-  const DeleteMeal = async (id: number) => {
+  const DeleteMeal = async (meal: CalEntry) => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${apiUrl}/api/meal`, {
@@ -482,7 +482,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ id }),
+        body: JSON.stringify({ id: meal.id, name: meal.name }),
       });
       if (response.status === 401) {
         handleUnauthorized();

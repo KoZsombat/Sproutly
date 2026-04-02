@@ -110,7 +110,9 @@
   "history": {
     "title": "History",
     "yourStreak": "Your Streak:",
-    "noHistory": "No history yet"
+    "noHistory": "No history yet",
+    "streakTipTitle": "Tip:",
+    "streakTip": "Log a meal every day to grow your streak!"
   },
   "navbar": {
     "history": "History",

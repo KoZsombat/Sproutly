@@ -24,7 +24,7 @@ export default function AddFoodModal({
   onEditIngredient: (id: number) => void;
   onDeleteIngredient: (id: number) => void;
   onEditMeal: (meal: CalEntry) => void;
-  onDeleteMeal: (id: number) => void;
+  onDeleteMeal: (meal: CalEntry) => void;
 }) {
   const { t } = useTranslation();
   const [list, setList] = useState(false);
@@ -137,7 +137,7 @@ export default function AddFoodModal({
                       </button>
                       <button
                         className="flex-1 px-3 py-2 rounded-lg bg-red-500 text-white text-xs font-medium hover:bg-red-600 transition-colors"
-                        onClick={() => onDeleteMeal(f.id)}
+                        onClick={() => onDeleteMeal(f)}
                       >
                         {t('common.delete')}
                       </button>

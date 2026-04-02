@@ -75,8 +75,8 @@ router.put(
           .json({ error: 'Could not update meal. Please try again later.' });
       }
       const sqlDelete =
-        'DELETE FROM meal_food WHERE username = ? AND meal_id = ?';
-      con.query(sqlDelete, [user, id], (err2) => {
+        'DELETE FROM meal_food WHERE username = ? AND meal = ?';
+      con.query(sqlDelete, [user, name], (err2) => {
         if (err2) {
           console.error('Meal food delete error');
           return res.status(500).json({
@@ -86,10 +86,10 @@ router.put(
         if (Array.isArray(food) && food.length > 0) {
           const values = food.map((f) => {
             const [foodName, grams] = f.split(':');
-            return [user, id, foodName, grams ?? '0'];
+            return [user, name, foodName, grams ?? '0'];
           });
           const sqlInsert =
-            'INSERT INTO meal_food (username, meal_id, food, grams) VALUES ?';
+            'INSERT INTO meal_food (username, meal, food, grams) VALUES ?';
           con.query(sqlInsert, [values], (err3) => {
             if (err3) {
               console.error('Meal food insert error');
@@ -109,7 +109,10 @@ router.put(
 
 router.delete(
   '/meal',
-  [body('id').isInt().withMessage('Id is required')],
+  [
+    body('id').isInt().withMessage('Id is required'),
+    body('name').trim().notEmpty().withMessage('Name is required'),
+  ],
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -117,7 +120,7 @@ router.delete(
     }
 
     const user = req.username;
-    const { id } = req.body;
+    const { id, name } = req.body;
     const sqlMeal = 'DELETE FROM meal WHERE username = ? AND id = ?';
     con.query(sqlMeal, [user, id], (err) => {
       if (err) {
@@ -126,9 +129,8 @@ router.delete(
           .status(500)
           .json({ error: 'Could not delete meal. Please try again later.' });
       }
-      const sqlFood =
-        'DELETE FROM meal_food WHERE username = ? AND meal_id = ?';
-      con.query(sqlFood, [user, id], (err2) => {
+      const sqlFood = 'DELETE FROM meal_food WHERE username = ? AND meal = ?';
+      con.query(sqlFood, [user, name], (err2) => {
         if (err2) {
           console.error('Meal food delete error');
           return res.status(500).json({

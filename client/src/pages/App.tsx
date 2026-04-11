@@ -361,12 +361,12 @@ export default function App({ onLogout }: { onLogout: () => void }) {
       await EditMeal(
         mealId,
         name,
-        filtered.map((i) => `${i.name}:${i.grams}`)
+        filtered.map((i) => ({ name: i.name, grams: i.grams }))
       );
     } else {
       await AddMeal(
         name,
-        filtered.map((i) => `${i.name}:${i.grams}`)
+        filtered.map((i) => ({ name: i.name, grams: i.grams }))
       );
     }
     setMealName('');
@@ -411,7 +411,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
       if (ingredient.displayAsMeal) {
         const grams =
           ingredient.mealGrams && ingredient.mealGrams !== '' ? ingredient.mealGrams : '100';
-        AddMeal(ingredient.name, [`${ingredient.name}:${grams}`]);
+        AddMeal(ingredient.name, [{ name: ingredient.name, grams }]);
       }
     }
     setVisibleTabs((prev) => ({
@@ -450,7 +450,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     setVisibleTabs((prev) => ({ ...prev, addFood: false, addMeal: true }));
   };
 
-  const AddMeal = async (mealName: string, foodList: string[]) => {
+  const AddMeal = async (mealName: string, foodList: { name: string; grams: string }[]) => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${apiUrl}/api/meal`, {
@@ -471,7 +471,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     }
   };
 
-  const EditMeal = async (id: number, newName: string, foodList: string[]) => {
+  const EditMeal = async (id: number, newName: string, foodList: { name: string; grams: string }[]) => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${apiUrl}/api/meal`, {

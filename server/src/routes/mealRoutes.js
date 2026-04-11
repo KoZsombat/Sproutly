@@ -20,7 +20,7 @@ router.post(
     const { name, food } = req.body;
 
     const sqlMeal = 'INSERT INTO meal (username, name) VALUES (?, ?)';
-    con.query(sqlMeal, [user, name], (err) => {
+    con.query(sqlMeal, [user, name], (err, result) => {
       if (err) {
         console.error('Meal creation error');
         return res
@@ -30,14 +30,13 @@ router.post(
 
       if (Array.isArray(food) && food.length > 0) {
         const values = food.map((f) => {
-          const [foodName, grams] = f.split(':');
-          return [user, name, foodName, grams ?? '0'];
+          return [user, name, f.name, f.grams ?? '0'];
         });
         const sqlFood =
           'INSERT INTO meal_food (username, meal, food, grams) VALUES ?';
         con.query(sqlFood, [values], (err2) => {
           if (err2) {
-            console.error('Meal food insert error');
+            console.error('Meal food insert error:', err2);
             return res.status(500).json({
               error: 'Could not add foods to meal. Please try again later.',
             });
@@ -78,21 +77,20 @@ router.put(
         'DELETE FROM meal_food WHERE username = ? AND meal = ?';
       con.query(sqlDelete, [user, name], (err2) => {
         if (err2) {
-          console.error('Meal food delete error');
+          console.error('Meal food delete error:', err2);
           return res.status(500).json({
             error: 'Could not update foods in meal. Please try again later.',
           });
         }
         if (Array.isArray(food) && food.length > 0) {
           const values = food.map((f) => {
-            const [foodName, grams] = f.split(':');
-            return [user, name, foodName, grams ?? '0'];
+            return [user, name, f.name, f.grams ?? '0'];
           });
           const sqlInsert =
             'INSERT INTO meal_food (username, meal, food, grams) VALUES ?';
           con.query(sqlInsert, [values], (err3) => {
             if (err3) {
-              console.error('Meal food insert error');
+              console.error('Meal food insert error:', err3);
               return res.status(500).json({
                 error: 'Could not add foods to meal. Please try again later.',
               });
@@ -111,7 +109,7 @@ router.delete(
   '/meal',
   [
     body('id').isInt().withMessage('Id is required'),
-    body('name').trim().notEmpty().withMessage('Name is required'),
+    body('name').trim().notEmpty().withMessage('Name is required')
   ],
   (req, res) => {
     const errors = validationResult(req);
@@ -132,7 +130,7 @@ router.delete(
       const sqlFood = 'DELETE FROM meal_food WHERE username = ? AND meal = ?';
       con.query(sqlFood, [user, name], (err2) => {
         if (err2) {
-          console.error('Meal food delete error');
+          console.error('Meal food delete error:', err2);
           return res.status(500).json({
             error: 'Could not delete foods from meal. Please try again later.',
           });

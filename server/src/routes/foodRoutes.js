@@ -42,10 +42,10 @@ router.get('/food', (req, res) => {
             id: meal.id,
             name: meal.name,
             food: mealFoodRows
-              .filter((mf) => mf.meal === meal.name)
+              .filter((mf) => mf.meal_id === meal.id)
               .map((mf) => mf.food),
             grams: mealFoodRows
-              .filter((mf) => mf.meal === meal.name)
+              .filter((mf) => mf.meal_id === meal.id)
               .map((mf) => String(mf.grams)),
           }));
           resolve(meals);

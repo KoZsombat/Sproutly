@@ -30,7 +30,8 @@ router.post(
 
       if (Array.isArray(food) && food.length > 0) {
         const values = food.map((f) => {
-          return [user, result.insertId, f.name, f.grams ?? '0'];
+          const [foodName, grams] = f.split(':');
+          return [user, result.insertId, foodName, grams ?? '0'];
         });
         const sqlFood =
           'INSERT INTO meal_food (username, meal_id, food, grams) VALUES ?';
@@ -84,7 +85,8 @@ router.put(
         }
         if (Array.isArray(food) && food.length > 0) {
           const values = food.map((f) => {
-            return [user, id, f.name, f.grams ?? '0'];
+            const [foodName, grams] = f.split(':');
+            return [user, id, foodName, grams ?? '0'];
           });
           const sqlInsert =
             'INSERT INTO meal_food (username, meal_id, food, grams) VALUES ?';

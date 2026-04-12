@@ -42,12 +42,12 @@ export default function AddMealModal({
 
   if (!visible) return null;
 
-  const validateMeal = (): string | null => {
+  const validateMeal = (ingredients: { name: string; grams: string }[]): string | null => {
     if (localMealName.trim() === '') return t('meal.errorNameRequired');
-    if (localSelectedIngredients.length === 0) return t('meal.errorIngredientRequired');
-    const invalid = localSelectedIngredients.find((si) => !isValidPositiveNumber(si.grams));
+    if (ingredients.length === 0) return t('meal.errorIngredientRequired');
+    const invalid = ingredients.find((si) => !isValidPositiveNumber(si.grams));
     if (invalid) return t('meal.errorGramsPositive', { name: invalid.name });
-    const tooLarge = localSelectedIngredients.find((si) => parseFloat(si.grams) > 100000);
+    const tooLarge = ingredients.find((si) => parseFloat(si.grams) > 100000);
     if (tooLarge) return t('meal.errorGramsTooLarge', { name: tooLarge.name });
     return null;
   };
@@ -123,13 +123,6 @@ export default function AddMealModal({
                       return [...prev, { name: ingredient.name, grams: numeric }];
                     });
                   }}
-                  onBlur={(e) => {
-                    if (e.target.value === '') {
-                      setLocalSelectedIngredients((prev) =>
-                        prev.map((i) => (i.name === ingredient.name ? { ...i, grams: '0' } : i))
-                      );
-                    }
-                  }}
                 />
               </div>
             );
@@ -139,13 +132,19 @@ export default function AddMealModal({
           <button
             className={`flex-1 px-4 py-3 rounded-lg ${editMode ? 'bg-[#5a5a5cff] hover:bg-[#6a6a6cff]' : 'bg-[#3a3a3cff] hover:bg-[#4a4a4cff]'} text-white font-medium transition-all active:scale-95 cursor-pointer`}
             onClick={() => {
-              const err = validateMeal();
+              const cleanedIngredients = localSelectedIngredients.map((i) => ({
+                ...i,
+                grams: i.grams === '' ? '0' : i.grams,
+              }));
+              setLocalSelectedIngredients(cleanedIngredients);
+
+              const err = validateMeal(cleanedIngredients);
               if (err) {
                 setErrorMsg(err);
                 return;
               }
               setErrorMsg(null);
-              onAdd(localMealName, localSelectedIngredients);
+              onAdd(localMealName, cleanedIngredients);
             }}
           >
             {editMode ? t('meal.saveChanges') : t('meal.createMeal')}

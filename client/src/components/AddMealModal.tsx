@@ -118,9 +118,9 @@ export default function AddMealModal({
                       const exists = prev.find((i) => i.name === ingredient.name);
                       if (exists)
                         return prev.map((i) =>
-                          i.name === ingredient.name ? { ...i, grams: numeric } : i
+                          i.name === ingredient.name ? { ...i, grams: numeric || '0' } : i
                         );
-                      return [...prev, { name: ingredient.name, grams: numeric }];
+                      return [...prev, { name: ingredient.name, grams: numeric || '0' }];
                     });
                   }}
                 />

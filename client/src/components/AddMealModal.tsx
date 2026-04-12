@@ -111,8 +111,7 @@ export default function AddMealModal({
                   type="numeric"
                   placeholder={t('common.grams')}
                   className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg w-20 sm:w-24 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={selected?.grams ?? ''}
-                  defaultValue={0}
+                  value={selected?.grams ?? '0'}
                   onChange={(e) => {
                     const numeric = e.target.value.replace(/[^0-9]/g, '');
                     setLocalSelectedIngredients((prev: { name: string; grams: string }[]) => {

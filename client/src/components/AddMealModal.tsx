@@ -111,17 +111,24 @@ export default function AddMealModal({
                   type="numeric"
                   placeholder={t('common.grams')}
                   className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg w-20 sm:w-24 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={selected?.grams ?? '0'}
+                  value={selected?.grams ?? ''}
                   onChange={(e) => {
                     const numeric = e.target.value.replace(/[^0-9]/g, '');
                     setLocalSelectedIngredients((prev: { name: string; grams: string }[]) => {
                       const exists = prev.find((i) => i.name === ingredient.name);
                       if (exists)
                         return prev.map((i) =>
-                          i.name === ingredient.name ? { ...i, grams: numeric || '0' } : i
+                          i.name === ingredient.name ? { ...i, grams: numeric } : i
                         );
-                      return [...prev, { name: ingredient.name, grams: numeric || '0' }];
+                      return [...prev, { name: ingredient.name, grams: numeric }];
                     });
+                  }}
+                  onBlur={(e) => {
+                    if (e.target.value === '') {
+                      setLocalSelectedIngredients((prev) =>
+                        prev.map((i) => (i.name === ingredient.name ? { ...i, grams: '0' } : i))
+                      );
+                    }
                   }}
                 />
               </div>

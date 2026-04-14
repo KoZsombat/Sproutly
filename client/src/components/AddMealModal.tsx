@@ -30,7 +30,8 @@ export default function AddMealModal({
 
   const isValidPositiveNumber = (v: string) => {
     const num = parseFloat(v);
-    return Number.isFinite(num) && num >= 0;
+    if (!num) return true;
+    return Number.isFinite(num) && num > 0;
   };
 
   useEffect(() => {
@@ -42,12 +43,12 @@ export default function AddMealModal({
 
   if (!visible) return null;
 
-  const validateMeal = (ingredients: { name: string; grams: string }[]): string | null => {
+  const validateMeal = (): string | null => {
     if (localMealName.trim() === '') return t('meal.errorNameRequired');
-    if (ingredients.length === 0) return t('meal.errorIngredientRequired');
-    const invalid = ingredients.find((si) => !isValidPositiveNumber(si.grams));
+    if (localSelectedIngredients.length === 0) return t('meal.errorIngredientRequired');
+    const invalid = localSelectedIngredients.find((si) => !isValidPositiveNumber(si.grams));
     if (invalid) return t('meal.errorGramsPositive', { name: invalid.name });
-    const tooLarge = ingredients.find((si) => parseFloat(si.grams) > 100000);
+    const tooLarge = localSelectedIngredients.find((si) => parseFloat(si.grams) > 100000);
     if (tooLarge) return t('meal.errorGramsTooLarge', { name: tooLarge.name });
     return null;
   };
@@ -132,19 +133,17 @@ export default function AddMealModal({
           <button
             className={`flex-1 px-4 py-3 rounded-lg ${editMode ? 'bg-[#5a5a5cff] hover:bg-[#6a6a6cff]' : 'bg-[#3a3a3cff] hover:bg-[#4a4a4cff]'} text-white font-medium transition-all active:scale-95 cursor-pointer`}
             onClick={() => {
-              const cleanedIngredients = localSelectedIngredients.map((i) => ({
-                ...i,
-                grams: i.grams === '' ? '0' : i.grams,
-              }));
-              setLocalSelectedIngredients(cleanedIngredients);
-
-              const err = validateMeal(cleanedIngredients);
+              const err = validateMeal();
               if (err) {
                 setErrorMsg(err);
                 return;
               }
               setErrorMsg(null);
-              onAdd(localMealName, cleanedIngredients);
+              const sanitizedIngredients = localSelectedIngredients.map((item) => ({
+                ...item,
+                grams: !parseFloat(item.grams) ? '0' : item.grams,
+              }));
+              onAdd(localMealName, sanitizedIngredients);
             }}
           >
             {editMode ? t('meal.saveChanges') : t('meal.createMeal')}

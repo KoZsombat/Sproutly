@@ -38,7 +38,7 @@ export default function AddFoodModal({
         <button
           className="hover:bg-gray-100 rounded-lg p-2 transition-colors cursor-pointer"
           onClick={onClose}
-          aria-label="Close"
+          aria-label={t('common.close')}
         >
           <IoCloseOutline size={28} color="#000" />
         </button>

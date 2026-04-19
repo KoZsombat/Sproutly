@@ -70,7 +70,6 @@ export default function AddIngredientModal({
     null
   );
   const [isBarcode, setIsBarcode] = useState<boolean>(false);
-  const [isNutTable] = useState<boolean>(false);
 
   const isMobile = () => {
     return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -112,7 +111,7 @@ export default function AddIngredientModal({
   const fetchProducts = async (search: string) => {
     if (search.length < 3) return;
     if (!nationality) {
-      setAlertMsg('Please select your nationality first.');
+      setAlertMsg(t('ingredient.errorNationalityNotSelected'));
       setAlertType('error');
       return;
     }
@@ -274,7 +273,6 @@ export default function AddIngredientModal({
           onClose={() => setIsBarcode(false)}
         />
       )}
-      {isNutTable && <h1>asd</h1>}
       <div className="flex flex-row justify-between items-center px-3 sm:px-6 py-2 sm:py-4 border-b border-gray-200 bg-white flex-shrink-0">
         <p className="text-3xl sm:text-4xl font-bold text-gray-900">
           {editMode ? t('ingredient.editTitle') : t('ingredient.addTitle')}
@@ -282,7 +280,7 @@ export default function AddIngredientModal({
         <button
           className="hover:bg-gray-100 rounded-lg p-2 transition-colors cursor-pointer"
           onClick={onClose}
-          aria-label="Close"
+          aria-label={t('common.close')}
         >
           <IoCloseOutline size={28} color="#000" />
         </button>
@@ -365,7 +363,13 @@ export default function AddIngredientModal({
                   }
                   options={dbAll.map((item) => ({
                     value: item.id,
-                    label: `${item.name} - ${item.calories} kcal, ${item.protein}g P, ${item.carbs}g C, ${item.fat}g F per 100g`,
+                    label: t('ingredient.optionLabel', {
+                      name: item.name,
+                      calories: item.calories,
+                      protein: item.protein,
+                      carbs: item.carbs,
+                      fat: item.fat,
+                    }),
                   }))}
                   onChange={(option) => {
                     setSelectedOption(option);
@@ -404,7 +408,9 @@ export default function AddIngredientModal({
                     }),
                   }}
                 />
-                <p className="text-right text-sm text-gray-600">Data: Open Food Facts, ODbL</p>
+                <p className="text-right text-sm text-gray-600">
+                  {t('ingredient.dataAttribution')}
+                </p>
               </>
             )}
           </div>
@@ -506,32 +512,47 @@ export default function AddIngredientModal({
             </div>
           </div>
         </div>
-        <div className="mt-4">
-          <div className="flex items-center">
-            <input
-              id="displayAsMeal"
-              type="checkbox"
-              checked={displayAsMeal}
-              onChange={() => setDisplayAsMeal((v) => !v)}
-              className="mr-2"
-            />
-            <label htmlFor="displayAsMeal" className="text-sm text-gray-700">
+        <div className="mt-6 rounded-xl border border-gray-200 bg-linear-to-b from-gray-50 to-white p-4 sm:p-5">
+          <div className="flex items-center justify-between gap-4">
+            <label htmlFor="displayAsMeal" className="text-sm font-medium text-gray-800">
               {t('ingredient.displayAsMeal')}
             </label>
+            <button
+              id="displayAsMeal"
+              type="button"
+              role="switch"
+              aria-checked={displayAsMeal}
+              onClick={() => setDisplayAsMeal((v) => !v)}
+              className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
+                displayAsMeal ? 'bg-blue-600' : 'bg-gray-300'
+              }`}
+            >
+              <span
+                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+                  displayAsMeal ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
           </div>
           {displayAsMeal && (
-            <div className="flex items-center mt-2">
-              <label htmlFor="mealGrams" className="text-sm text-gray-700 mr-2">
+            <div className="mt-4 flex items-center gap-3">
+              <label htmlFor="mealGrams" className="text-sm font-medium text-gray-700">
                 {t('ingredient.mealGrams')}
               </label>
-              <input
-                id="mealGrams"
-                type="number"
-                min="1"
-                className="border rounded px-2 py-1 w-24"
-                value={mealGrams}
-                onChange={(e) => setMealGrams(e.target.value.replace(/[^0-9]/g, ''))}
-              />
+              <div className="relative w-28">
+                <input
+                  id="mealGrams"
+                  type="number"
+                  inputMode="numeric"
+                  min="1"
+                  className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-3 pr-9 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                  value={mealGrams}
+                  onChange={(e) => setMealGrams(e.target.value.replace(/[^0-9]/g, ''))}
+                />
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-gray-500">
+                  g
+                </span>
+              </div>
             </div>
           )}
         </div>

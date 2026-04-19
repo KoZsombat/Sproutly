@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import ScanbotSDK from 'scanbot-web-sdk/ui';
+import { useTranslation } from 'react-i18next';
 
 type DetectedBarcode = { text: string };
 type BarcodeDetectionResult = { barcodes?: DetectedBarcode[] };
@@ -21,6 +22,7 @@ type BarcodeNumberScannerProps = {
 };
 
 export default function BarcodeNumberScanner({ onDetected, onClose }: BarcodeNumberScannerProps) {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const containerIdRef = useRef(`barcode-scanner-container-${Math.random().toString(36).slice(2)}`);
   const initTimeoutRef = useRef<number | null>(null);
@@ -156,9 +158,9 @@ export default function BarcodeNumberScanner({ onDetected, onClose }: BarcodeNum
           type="button"
           className="absolute right-3 top-3 z-10 rounded bg-white/90 px-3 py-1 text-sm font-medium text-black hover:bg-white"
           onClick={safeClose}
-          aria-label="Close scanner"
+          aria-label={t('common.closeScanner')}
         >
-          Close
+          {t('common.close')}
         </button>
         <div id={containerIdRef.current} ref={containerRef} className="w-full h-full" />
       </div>

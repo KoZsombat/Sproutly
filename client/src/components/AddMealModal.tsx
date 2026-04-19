@@ -58,7 +58,7 @@ export default function AddMealModal({
   };
 
   const handleDuplicateMeal = (meal: CalEntry) => {
-    setLocalMealName(`${meal.name} (Copy)`);
+    setLocalMealName(`${meal.name} ${t('meal.copySuffix')}`);
     setLocalSelectedIngredients(
       meal.food.map((foodName, idx) => ({
         name: foodName,
@@ -82,7 +82,7 @@ export default function AddMealModal({
         <button
           className="hover:bg-gray-100 rounded-lg p-2 transition-colors cursor-pointer"
           onClick={onClose}
-          aria-label="Close"
+          aria-label={t('common.close')}
         >
           <IoCloseOutline size={28} color="#000" />
         </button>
@@ -103,12 +103,12 @@ export default function AddMealModal({
               onClick={() => setShowDuplicateMenu(!showDuplicateMenu)}
               className="w-full px-4 py-2 mb-2 border rounded-md border-gray-300 bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition-all"
             >
-              {showDuplicateMenu ? 'Hide' : 'Duplicate Meal'}
+              {showDuplicateMenu ? t('meal.hideDuplicate') : t('meal.duplicateMeal')}
             </button>
             {showDuplicateMenu && (
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
                 <input
-                  placeholder="Search meals..."
+                  placeholder={t('meal.searchMeals')}
                   className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 mb-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   value={duplicateSearch}
                   onChange={(e) => setDuplicateSearch(e.target.value)}
@@ -125,7 +125,7 @@ export default function AddMealModal({
                       </button>
                     ))
                   ) : (
-                    <p className="text-sm text-gray-500 p-2">No meals found</p>
+                    <p className="text-sm text-gray-500 p-2">{t('meal.noMealsFound')}</p>
                   )}
                 </div>
               </div>

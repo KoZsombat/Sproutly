@@ -25,7 +25,7 @@ export default function CreatineIntake({ done = false, onChange }: CreatineIntak
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <div className="bg-[#f2f2f2ff] rounded-lg p-2">
-            <span className="text-xl" role="img" aria-label="capsule">
+            <span className="text-xl" role="img" aria-label={t('common.ariaCapsule')}>
               💊
             </span>
           </div>

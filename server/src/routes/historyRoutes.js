@@ -64,4 +64,37 @@ router.get('/history', (req, res) => {
   });
 });
 
+router.delete('/history', (req, res) => {
+  const user = req.username;
+  const keepDatesRaw = req.body?.keepDates;
+  const keepDates =
+    Array.isArray(keepDatesRaw) &&
+    keepDatesRaw.every(
+      (d) => typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d)
+    )
+      ? keepDatesRaw
+      : [];
+
+  let sql = 'DELETE FROM eaten_history WHERE username = ?';
+  let params = [user];
+
+  if (keepDates.length > 0) {
+    const placeholders = keepDates.map(() => '?').join(', ');
+    sql = `DELETE FROM eaten_history WHERE username = ? AND DATE(date) NOT IN (${placeholders})`;
+    params = [user, ...keepDates];
+  }
+
+  con.query(sql, params, (err, result) => {
+    if (err) {
+      console.error('History clear error');
+      return res
+        .status(500)
+        .json({
+          error: 'Could not clear non-streak history. Please try again later.',
+        });
+    }
+    return res.json({ success: true, deletedRows: result.affectedRows ?? 0 });
+  });
+});
+
 export default router;

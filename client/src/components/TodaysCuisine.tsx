@@ -55,10 +55,13 @@ export default function TodaysCuisine({
               allProtein = 0,
               allCarbs = 0,
               allFat = 0;
-            meal.food.forEach((item) => {
+            meal.food.forEach((item, idx) => {
               const foodItem = food.find((f) => f.name === item);
               if (foodItem) {
-                const factor = 1; // Now we always use 100g
+                const gramsRaw = meal.grams?.[idx] ?? '100';
+                const grams = parseFloat(gramsRaw);
+                if (!Number.isFinite(grams) || grams <= 0) return;
+                const factor = grams / 100;
                 allCals += foodItem.cal * factor;
                 allProtein += foodItem.protein * factor;
                 allCarbs += foodItem.carbs * factor;

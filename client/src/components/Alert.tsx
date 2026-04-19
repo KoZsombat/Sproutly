@@ -1,5 +1,6 @@
 import '../Alert.css';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type AlertType = 'success' | 'error';
 
@@ -12,6 +13,7 @@ export default function Alert({
   type?: AlertType;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const [animation, setAnimation] = useState('animate-slideDown');
 
   useEffect(() => {
@@ -29,14 +31,14 @@ export default function Alert({
           border: 'border-green-400',
           text: 'text-green-800',
           title: 'text-green-700',
-          label: 'Success',
+          label: t('common.success'),
         }
       : {
           bg: 'bg-red-100',
           border: 'border-red-400',
           text: 'text-red-800',
           title: 'text-red-700',
-          label: 'Error',
+          label: t('common.error'),
         };
 
   return (

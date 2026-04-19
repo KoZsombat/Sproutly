@@ -30,7 +30,7 @@ export default function WaterIntake({ water = 0, goalLiters = 2, onChange }: Wat
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <div className="bg-[#f2f2f2ff] rounded-lg p-2">
-            <span className="text-xl" role="img" aria-label="water drop">
+            <span className="text-xl" role="img" aria-label={t('common.ariaWaterDrop')}>
               💧
             </span>
           </div>
@@ -46,7 +46,7 @@ export default function WaterIntake({ water = 0, goalLiters = 2, onChange }: Wat
           {liters.toFixed(2)}L
         </p>
 
-        <div className="flex flex-wrap items-center justify-center gap-1.5 w-full max-w-[280px] sm:max-w-[320px]">
+        <div className="flex flex-wrap items-center justify-center gap-1.5 w-full max-w-[280px] sm:max-w-[320px] py-4">
           {Array.from({ length: fullBottles }).map((_, index) => (
             <span key={`full-bottle-${index}`} className="text-2xl leading-none select-none">
               🥛

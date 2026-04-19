@@ -14,9 +14,11 @@ import ToastDisplay from '../components/ToastDisplay';
 import { useToast } from '../context/ToastContext';
 import type { CalEntry, FoodEntry, EatenEntry, EatenHistory } from '../types/types';
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function App({ onLogout }: { onLogout: () => void }) {
   const apiUrl = import.meta.env.VITE_API_URL;
+  const { t } = useTranslation();
   const { addToast } = useToast();
   const [username, setUsername] = useState<string>('');
 
@@ -64,7 +66,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
   const [eatenHistory, setEatenHistory] = useState<EatenHistory[]>([]);
 
   // Ingredient state
-  const [ingredientName, setIngredientName] = useState('name');
+  const [ingredientName, setIngredientName] = useState('');
   const [ingredientCalories, setIngredientCalories] = useState('0');
   const [ingredientProtein, setIngredientProtein] = useState('0');
   const [ingredientCarbs, setIngredientCarbs] = useState('0');
@@ -83,6 +85,25 @@ export default function App({ onLogout }: { onLogout: () => void }) {
   const [editMealIngredients, setEditMealIngredients] = useState<{ name: string; grams: string }[]>(
     []
   );
+
+  const resetIngredientModalState = () => {
+    setEditMode(false);
+    setEditName(null);
+    setIngredientName('');
+    setIngredientCalories('0');
+    setIngredientProtein('0');
+    setIngredientCarbs('0');
+    setIngredientFat('0');
+  };
+
+  const resetMealModalState = () => {
+    setMealName('');
+    setSelectedIngredients([]);
+    setEditMealMode(false);
+    setEditMealOldName(null);
+    setEditMealName('');
+    setEditMealIngredients([]);
+  };
 
   const Start = useCallback(async () => {
     try {
@@ -350,11 +371,11 @@ export default function App({ onLogout }: { onLogout: () => void }) {
           return;
         }
         if (!response.ok) {
-          addToast('Failed to create ingredient', 'error');
+          addToast(t('ingredient.toastCreateFailed'), 'error');
           return;
         }
-        addToast('Ingredient created successfully', 'success');
-        setIngredientName('name');
+        addToast(t('ingredient.toastCreateSuccess'), 'success');
+        setIngredientName('');
         setIngredientCalories('0');
         setIngredientProtein('0');
         setIngredientCarbs('0');
@@ -362,7 +383,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         LoadFood();
       } catch (e) {
         console.error('Failed to add ingredient', e);
-        addToast('Error creating ingredient', 'error');
+        addToast(t('ingredient.toastCreateError'), 'error');
       }
     }
   };
@@ -416,11 +437,11 @@ export default function App({ onLogout }: { onLogout: () => void }) {
           return;
         }
         if (!response.ok) {
-          addToast('Failed to update ingredient', 'error');
+          addToast(t('ingredient.toastUpdateFailed'), 'error');
           return;
         }
-        addToast('Ingredient updated successfully', 'success');
-        setIngredientName('name');
+        addToast(t('ingredient.toastUpdateSuccess'), 'success');
+        setIngredientName('');
         setIngredientCalories('0');
         setIngredientProtein('0');
         setIngredientCarbs('0');
@@ -428,7 +449,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         LoadFood();
       } catch (e) {
         console.error('Failed to edit ingredient', e);
-        addToast('Error updating ingredient', 'error');
+        addToast(t('ingredient.toastUpdateError'), 'error');
       }
     }
   };
@@ -449,14 +470,14 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         return;
       }
       if (!response.ok) {
-        addToast('Failed to delete ingredient', 'error');
+        addToast(t('ingredient.toastDeleteFailed'), 'error');
         return;
       }
-      addToast('Ingredient deleted successfully', 'success');
+      addToast(t('ingredient.toastDeleteSuccess'), 'success');
       LoadFood();
     } catch (e) {
       console.error('Failed to delete ingredient', e);
-      addToast('Error deleting ingredient', 'error');
+      addToast(t('ingredient.toastDeleteError'), 'error');
     }
   };
 
@@ -479,12 +500,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         filtered.map((i) => `${i.name}:${i.grams}`)
       );
     }
-    setMealName('');
-    setSelectedIngredients([]);
-    setEditMealMode(false);
-    setEditMealOldName(null);
-    setEditMealName('');
-    setEditMealIngredients([]);
+    resetMealModalState();
     setVisibleTabs((prev) => ({
       ...prev,
       addMeal: false,
@@ -493,13 +509,17 @@ export default function App({ onLogout }: { onLogout: () => void }) {
   };
 
   const handleAddIngredientModalClose = () => {
+    resetIngredientModalState();
     setVisibleTabs((prev) => ({
       ...prev,
       addIngredient: false,
       addFood: true,
     }));
-    setEditMode(false);
-    setEditName(null);
+  };
+
+  const handleAddFoodModalOpenIngredient = () => {
+    resetIngredientModalState();
+    setVisibleTabs((prev) => ({ ...prev, addFood: false, addIngredient: true }));
   };
 
   const handleAddIngredientModalAdd = (ingredient: {
@@ -537,17 +557,12 @@ export default function App({ onLogout }: { onLogout: () => void }) {
       addMeal: false,
       addFood: true,
     }));
-    setEditMealMode(false);
-    setEditMealOldName(null);
-    setEditMealName('');
-    setEditMealIngredients([]);
+    resetMealModalState();
   };
 
   const handleAddFoodModalOpenMeal = () => {
-    toggleTab('addMeal')();
-    setEditMealMode(false);
-    setMealName('');
-    setSelectedIngredients([]);
+    resetMealModalState();
+    setVisibleTabs((prev) => ({ ...prev, addFood: false, addMeal: true }));
   };
 
   const handleAddFoodModalEditMeal = (meal: CalEntry) => {
@@ -576,14 +591,14 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         return;
       }
       if (!response.ok) {
-        addToast('Failed to create meal', 'error');
+        addToast(t('meal.toastCreateFailed'), 'error');
         return;
       }
-      addToast('Meal created successfully', 'success');
+      addToast(t('meal.toastCreateSuccess'), 'success');
       LoadFood();
     } catch (e) {
       console.error('Failed to add meal', e);
-      addToast('Error creating meal', 'error');
+      addToast(t('meal.toastCreateError'), 'error');
     }
   };
 
@@ -603,14 +618,14 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         return;
       }
       if (!response.ok) {
-        addToast('Failed to update meal', 'error');
+        addToast(t('meal.toastUpdateFailed'), 'error');
         return;
       }
-      addToast('Meal updated successfully', 'success');
+      addToast(t('meal.toastUpdateSuccess'), 'success');
       LoadFood();
     } catch (e) {
       console.error('Failed to edit meal', e);
-      addToast('Error updating meal', 'error');
+      addToast(t('meal.toastUpdateError'), 'error');
     }
   };
 
@@ -630,14 +645,14 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         return;
       }
       if (!response.ok) {
-        addToast('Failed to delete meal', 'error');
+        addToast(t('meal.toastDeleteFailed'), 'error');
         return;
       }
-      addToast('Meal deleted successfully', 'success');
+      addToast(t('meal.toastDeleteSuccess'), 'success');
       LoadFood();
     } catch (e) {
       console.error('Failed to delete meal', e);
-      addToast('Error deleting meal', 'error');
+      addToast(t('meal.toastDeleteError'), 'error');
     }
   };
 
@@ -658,15 +673,15 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         return;
       }
       if (!response.ok) {
-        addToast('Failed to add meal', 'error');
+        addToast(t('meal.toastAddFailed'), 'error');
         return;
       }
-      addToast('Meal added successfully', 'success');
+      addToast(t('meal.toastAddSuccess'), 'success');
       LoadFood();
       toggleTab('appendFood')();
     } catch (e) {
       console.error('Failed to add eaten meal', e);
-      addToast('Error adding meal', 'error');
+      addToast(t('meal.toastAddError'), 'error');
     }
   };
 
@@ -686,14 +701,14 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         return;
       }
       if (!response.ok) {
-        addToast('Failed to delete meal', 'error');
+        addToast(t('eaten.toastDeleteFailed'), 'error');
         return;
       }
-      addToast('Meal removed', 'success');
+      addToast(t('eaten.toastDeleteSuccess'), 'success');
       LoadFood();
     } catch (e) {
       console.error('Failed to delete eaten meal', e);
-      addToast('Error removing meal', 'error');
+      addToast(t('eaten.toastDeleteError'), 'error');
     }
   };
 
@@ -712,7 +727,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         return;
       }
       if (!clearResponse.ok) {
-        addToast('Failed to save day', 'error');
+        addToast(t('tracking.toastSaveFailed'), 'error');
         return;
       }
       const historyResponse = await fetch(`${apiUrl}/api/history`, {
@@ -733,7 +748,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         handleUnauthorized();
         return;
       }
-      addToast('Day saved successfully', 'success');
+      addToast(t('tracking.toastSaveSuccess'), 'success');
       LoadFood();
       LoadTracking();
       setCalories(0);
@@ -742,7 +757,37 @@ export default function App({ onLogout }: { onLogout: () => void }) {
       setFat(0);
     } catch (e) {
       console.error('Failed to clear eaten', e);
-      addToast('Error saving day', 'error');
+      addToast(t('tracking.toastSaveError'), 'error');
+    }
+  };
+
+  const clearHistory = async (keepDates: string[]) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${apiUrl}/api/history`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ keepDates }),
+      });
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+
+      if (!response.ok) {
+        addToast(t('history.clearOutOfStreakError'), 'error');
+        return;
+      }
+
+      addToast(t('history.clearOutOfStreakSuccess'), 'success');
+      await LoadFood();
+    } catch (e) {
+      console.error('Failed to clear history', e);
+      addToast(t('history.clearOutOfStreakError'), 'error');
     }
   };
 
@@ -778,11 +823,12 @@ export default function App({ onLogout }: { onLogout: () => void }) {
       const meal = cals.find((c) => c.name === e.name);
       if (!meal) return;
       meal.food.forEach((item, idx) => {
-        const grams = meal.grams && meal.grams[idx] !== '' ? meal.grams[idx] : null;
-        if (!grams) return;
+        const gramsRaw = meal.grams?.[idx] ?? '100';
+        const grams = parseFloat(gramsRaw);
+        if (!Number.isFinite(grams) || grams <= 0) return;
         const foodItem = food.find((f) => f.name === item);
         if (foodItem) {
-          const factor = 1; // Always 100g
+          const factor = grams / 100;
           totalCals += foodItem.cal * factor;
           totalProtein += foodItem.protein * factor;
           totalCarbs += foodItem.carbs * factor;
@@ -857,7 +903,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         onClose={toggleTab('addFood')}
         food={food}
         cals={cals}
-        onOpenIngredient={toggleTab('addIngredient')}
+        onOpenIngredient={handleAddFoodModalOpenIngredient}
         onOpenMeal={handleAddFoodModalOpenMeal}
         onEditIngredient={handleEditIngredient}
         onDeleteIngredient={DeleteIngerdient}
@@ -892,6 +938,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
       <History
         visible={visibleTabs['historyTab']}
         onClose={toggleTab('historyTab')}
+        onClearHistory={clearHistory}
         eatenData={eatenHistory}
       />
       <Navbar

@@ -111,7 +111,7 @@ router.delete(
   '/meal',
   [
     body('id').isInt().withMessage('Id is required'),
-    body('name').trim().notEmpty().withMessage('Name is required')
+    body('name').trim().notEmpty().withMessage('Name is required'),
   ],
   (req, res) => {
     const errors = validationResult(req);
@@ -129,7 +129,8 @@ router.delete(
           .status(500)
           .json({ error: 'Could not delete meal. Please try again later.' });
       }
-      const sqlFood = 'DELETE FROM meal_food WHERE username = ? AND meal_id = ?';
+      const sqlFood =
+        'DELETE FROM meal_food WHERE username = ? AND meal_id = ?';
       con.query(sqlFood, [user, id], (err2) => {
         if (err2) {
           console.error('Meal food delete error:', err2);

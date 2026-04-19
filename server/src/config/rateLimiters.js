@@ -1,7 +1,8 @@
 import rateLimit from 'express-rate-limit';
 
 const safeIpKey = (req) => {
-  const ip = req?.ip || req?.headers?.['x-forwarded-for'] || req?.socket?.remoteAddress;
+  const ip =
+    req?.ip || req?.headers?.['x-forwarded-for'] || req?.socket?.remoteAddress;
   return typeof ip === 'string' ? ip.replace(/:\d+[^:]*$/, '') : 'unknown';
 };
 

@@ -87,11 +87,9 @@ router.delete('/history', (req, res) => {
   con.query(sql, params, (err, result) => {
     if (err) {
       console.error('History clear error');
-      return res
-        .status(500)
-        .json({
-          error: 'Could not clear non-streak history. Please try again later.',
-        });
+      return res.status(500).json({
+        error: 'Could not clear non-streak history. Please try again later.',
+      });
     }
     return res.json({ success: true, deletedRows: result.affectedRows ?? 0 });
   });

@@ -55,15 +55,15 @@ router.get('/food', (req, res) => {
 
   const getEaten = () =>
     new Promise((resolve, reject) => {
-      const sql = 'SELECT meal, gram FROM eaten_meal WHERE username = ?';
+      const sql = 'SELECT id, meal as name FROM eaten_meal WHERE username = ?';
       con.query(sql, [user], (err, result) => {
         if (err)
           return reject(
             'Could not load your eaten meals. Please try again later.'
           );
         const eaten = result.map((r) => ({
-          name: r.meal,
-          grams: r.gram,
+          id: r.id,
+          name: r.name,
         }));
         resolve(eaten);
       });

@@ -8,11 +8,16 @@ import AddIngredientModal from '../components/AddIngredientModal';
 import AddMealModal from '../components/AddMealModal';
 import Navbar from '../components/Navbar';
 import History from '../components/HistoryModal';
+import WaterIntake from '../components/WaterIntake';
+import CreatineIntake from '../components/CreatineIntake';
+import ToastDisplay from '../components/ToastDisplay';
+import { useToast } from '../context/ToastContext';
 import type { CalEntry, FoodEntry, EatenEntry, EatenHistory } from '../types/types';
 import { useState, useEffect, useCallback } from 'react';
 
 export default function App({ onLogout }: { onLogout: () => void }) {
   const apiUrl = import.meta.env.VITE_API_URL;
+  const { addToast } = useToast();
   const [username, setUsername] = useState<string>('');
 
   const handleUnauthorized = useCallback(() => {
@@ -41,7 +46,11 @@ export default function App({ onLogout }: { onLogout: () => void }) {
   const [proteinMax, setMaxProtein] = useState('0');
   const [carbsMax, setMaxCarbs] = useState('0');
   const [fatMax, setMaxFat] = useState('0');
+  const [waterGoal, setWaterGoal] = useState('2');
+  const [creatineEnabled, setCreatineEnabled] = useState(true);
   const [userNationality, setUserNationality] = useState('');
+  const [waterIntake, setWaterIntake] = useState(0);
+  const [creatineDone, setCreatineDone] = useState(false);
   // Stats state
   const [calories, setCalories] = useState(0);
   const [protein, setProtein] = useState(0);
@@ -65,8 +74,6 @@ export default function App({ onLogout }: { onLogout: () => void }) {
 
   // Meal state
   const [mealName, setMealName] = useState('');
-  const [activeItem, setActiveItem] = useState('');
-  const [mealGrams, setMealGrams] = useState('0');
   const [selectedIngredients, setSelectedIngredients] = useState<{ name: string; grams: string }[]>(
     []
   );
@@ -126,6 +133,8 @@ export default function App({ onLogout }: { onLogout: () => void }) {
       setMaxProtein(String(data.protein));
       setMaxCarbs(String(data.carbs));
       setMaxFat(String(data.fat));
+      setWaterGoal(String(data.waterGoal ?? 2));
+      setCreatineEnabled(data.creatineEnabled ?? true);
       setUserNationality(data.nationality);
     } catch (e) {
       console.error('Failed to fetch user data', e);
@@ -138,6 +147,8 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     proteinMax: string;
     carbsMax: string;
     fatMax: string;
+    waterGoal: string;
+    creatineEnabled: boolean;
     nationality: string;
   }) => {
     try {
@@ -154,6 +165,8 @@ export default function App({ onLogout }: { onLogout: () => void }) {
           protein: parseFloat(next.proteinMax),
           carbs: parseFloat(next.carbsMax),
           fat: parseFloat(next.fatMax),
+          waterGoal: parseFloat(next.waterGoal.replace(',', '.')),
+          creatineEnabled: next.creatineEnabled,
           nationality: next.nationality,
         }),
       });
@@ -173,6 +186,8 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         setMaxProtein(next.proteinMax);
         setMaxCarbs(next.carbsMax);
         setMaxFat(next.fatMax);
+        setWaterGoal(next.waterGoal);
+        setCreatineEnabled(next.creatineEnabled);
         setUserNationality(next.nationality);
       }
     } catch (e) {
@@ -221,6 +236,83 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     }
   }, [apiUrl, handleUnauthorized]);
 
+  const LoadTracking = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${apiUrl}/api/tracking`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+      if (!response.ok) {
+        const error = await response.json();
+        console.error('Tracking load failed:', error);
+        return;
+      }
+      const data = await response.json();
+      setWaterIntake(Number(data.water ?? 0));
+      setCreatineDone(Boolean(data.creatineDone));
+    } catch (e) {
+      console.error('Failed to load tracking data', e);
+    }
+  }, [apiUrl, handleUnauthorized]);
+
+  const UpdateWaterTracking = async (liters: number) => {
+    setWaterIntake(liters);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${apiUrl}/api/tracking/water`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ liters }),
+      });
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+      if (!response.ok) {
+        const error = await response.json();
+        console.error('Water tracking update failed:', error);
+      }
+    } catch (e) {
+      console.error('Failed to update water tracking', e);
+    }
+  };
+
+  const UpdateCreatineTracking = async (done: boolean) => {
+    setCreatineDone(done);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${apiUrl}/api/tracking/creatine`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ done }),
+      });
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+      if (!response.ok) {
+        const error = await response.json();
+        console.error('Creatine tracking update failed:', error);
+      }
+    } catch (e) {
+      console.error('Failed to update creatine tracking', e);
+    }
+  };
+
   const AddIngredient = async (ingredient: {
     name: string;
     calories: string;
@@ -257,6 +349,11 @@ export default function App({ onLogout }: { onLogout: () => void }) {
           handleUnauthorized();
           return;
         }
+        if (!response.ok) {
+          addToast('Failed to create ingredient', 'error');
+          return;
+        }
+        addToast('Ingredient created successfully', 'success');
         setIngredientName('name');
         setIngredientCalories('0');
         setIngredientProtein('0');
@@ -265,6 +362,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         LoadFood();
       } catch (e) {
         console.error('Failed to add ingredient', e);
+        addToast('Error creating ingredient', 'error');
       }
     }
   };
@@ -317,6 +415,11 @@ export default function App({ onLogout }: { onLogout: () => void }) {
           handleUnauthorized();
           return;
         }
+        if (!response.ok) {
+          addToast('Failed to update ingredient', 'error');
+          return;
+        }
+        addToast('Ingredient updated successfully', 'success');
         setIngredientName('name');
         setIngredientCalories('0');
         setIngredientProtein('0');
@@ -325,6 +428,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         LoadFood();
       } catch (e) {
         console.error('Failed to edit ingredient', e);
+        addToast('Error updating ingredient', 'error');
       }
     }
   };
@@ -344,9 +448,15 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         handleUnauthorized();
         return;
       }
+      if (!response.ok) {
+        addToast('Failed to delete ingredient', 'error');
+        return;
+      }
+      addToast('Ingredient deleted successfully', 'success');
       LoadFood();
     } catch (e) {
       console.error('Failed to delete ingredient', e);
+      addToast('Error deleting ingredient', 'error');
     }
   };
 
@@ -465,9 +575,15 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         handleUnauthorized();
         return;
       }
+      if (!response.ok) {
+        addToast('Failed to create meal', 'error');
+        return;
+      }
+      addToast('Meal created successfully', 'success');
       LoadFood();
     } catch (e) {
       console.error('Failed to add meal', e);
+      addToast('Error creating meal', 'error');
     }
   };
 
@@ -486,9 +602,15 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         handleUnauthorized();
         return;
       }
+      if (!response.ok) {
+        addToast('Failed to update meal', 'error');
+        return;
+      }
+      addToast('Meal updated successfully', 'success');
       LoadFood();
     } catch (e) {
       console.error('Failed to edit meal', e);
+      addToast('Error updating meal', 'error');
     }
   };
 
@@ -507,15 +629,21 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         handleUnauthorized();
         return;
       }
+      if (!response.ok) {
+        addToast('Failed to delete meal', 'error');
+        return;
+      }
+      addToast('Meal deleted successfully', 'success');
       LoadFood();
     } catch (e) {
       console.error('Failed to delete meal', e);
+      addToast('Error deleting meal', 'error');
     }
   };
 
   const AddEaten = async (mealName: string) => {
     try {
-      if (mealGrams === '0' || mealName === '') return;
+      if (mealName === '') return;
       const token = localStorage.getItem('token');
       const response = await fetch(`${apiUrl}/api/eaten`, {
         method: 'POST',
@@ -523,21 +651,26 @@ export default function App({ onLogout }: { onLogout: () => void }) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ meal: mealName, gram: mealGrams }),
+        body: JSON.stringify({ meal: mealName }),
       });
       if (response.status === 401) {
         handleUnauthorized();
         return;
       }
-      setMealGrams('100');
+      if (!response.ok) {
+        addToast('Failed to add meal', 'error');
+        return;
+      }
+      addToast('Meal added successfully', 'success');
       LoadFood();
       toggleTab('appendFood')();
     } catch (e) {
       console.error('Failed to add eaten meal', e);
+      addToast('Error adding meal', 'error');
     }
   };
 
-  const handleDeleteEaten = async (name: string) => {
+  const handleDeleteEaten = async (id: number) => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${apiUrl}/api/eaten`, {
@@ -546,15 +679,21 @@ export default function App({ onLogout }: { onLogout: () => void }) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ meal: name }),
+        body: JSON.stringify({ id }),
       });
       if (response.status === 401) {
         handleUnauthorized();
         return;
       }
+      if (!response.ok) {
+        addToast('Failed to delete meal', 'error');
+        return;
+      }
+      addToast('Meal removed', 'success');
       LoadFood();
     } catch (e) {
       console.error('Failed to delete eaten meal', e);
+      addToast('Error removing meal', 'error');
     }
   };
 
@@ -570,6 +709,10 @@ export default function App({ onLogout }: { onLogout: () => void }) {
       });
       if (clearResponse.status === 401) {
         handleUnauthorized();
+        return;
+      }
+      if (!clearResponse.ok) {
+        addToast('Failed to save day', 'error');
         return;
       }
       const historyResponse = await fetch(`${apiUrl}/api/history`, {
@@ -590,13 +733,16 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         handleUnauthorized();
         return;
       }
+      addToast('Day saved successfully', 'success');
       LoadFood();
+      LoadTracking();
       setCalories(0);
       setProtein(0);
       setCarbs(0);
       setFat(0);
     } catch (e) {
       console.error('Failed to clear eaten', e);
+      addToast('Error saving day', 'error');
     }
   };
 
@@ -616,8 +762,9 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     if (username) {
       Load();
       LoadFood();
+      LoadTracking();
     }
-  }, [Load, LoadFood, username]);
+  }, [Load, LoadFood, LoadTracking, username]);
 
   useEffect(() => {
     if (!Eaten || !food || !cals) return;
@@ -635,7 +782,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         if (!grams) return;
         const foodItem = food.find((f) => f.name === item);
         if (foodItem) {
-          const factor = parseFloat(e.grams) / 100;
+          const factor = 1; // Always 100g
           totalCals += foodItem.cal * factor;
           totalProtein += foodItem.protein * factor;
           totalCarbs += foodItem.carbs * factor;
@@ -652,6 +799,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
 
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden pb-[10vh] flex flex-col items-center">
+      <ToastDisplay />
       <SettingsModal
         visible={visibleTabs['settingsTab']}
         onClose={toggleTab('settingsTab')}
@@ -660,6 +808,8 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         proteinMax={proteinMax}
         carbsMax={carbsMax}
         fatMax={fatMax}
+        waterGoal={waterGoal}
+        creatineEnabled={creatineEnabled}
         nationality={userNationality}
         onUpdate={Update}
       />
@@ -683,15 +833,23 @@ export default function App({ onLogout }: { onLogout: () => void }) {
           onOpenAppend={toggleTab('appendFood')}
           onDeleteEaten={handleDeleteEaten}
         />
+        <div
+          className={`grid grid-cols-1 ${creatineEnabled ? 'md:grid-cols-2' : 'md:grid-cols-1'} gap-3 mx-3 my-2 sm:mx-5 sm:my-5`}
+        >
+          <WaterIntake
+            water={waterIntake}
+            goalLiters={parseFloat(waterGoal.replace(',', '.')) || 2}
+            onChange={UpdateWaterTracking}
+          />
+          {creatineEnabled && (
+            <CreatineIntake done={creatineDone} onChange={UpdateCreatineTracking} />
+          )}
+        </div>
       </div>
       <AppendFoodModal
         visible={visibleTabs['appendFood']}
         onClose={toggleTab('appendFood')}
         cals={cals}
-        mealGrams={mealGrams}
-        setMealGrams={setMealGrams}
-        activeItem={activeItem}
-        setActiveItem={setActiveItem}
         onAddEaten={AddEaten}
       />
       <AddFoodModal
@@ -725,6 +883,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         visible={visibleTabs['addMeal']}
         onClose={handleAddMealModalClose}
         food={food}
+        cals={cals}
         editMode={editMealMode}
         initialMealName={editMealMode ? editMealName : mealName}
         initialIngredients={editMealMode ? editMealIngredients : selectedIngredients}

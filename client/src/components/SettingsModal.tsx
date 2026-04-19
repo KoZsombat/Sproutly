@@ -18,6 +18,8 @@ export default function SettingsModal({
   proteinMax,
   carbsMax,
   fatMax,
+  waterGoal,
+  creatineEnabled,
   nationality,
   onUpdate,
 }: {
@@ -28,6 +30,8 @@ export default function SettingsModal({
   proteinMax: string;
   carbsMax: string;
   fatMax: string;
+  waterGoal: string;
+  creatineEnabled: boolean;
   nationality: string;
   onUpdate: (payload: {
     email: string;
@@ -35,6 +39,8 @@ export default function SettingsModal({
     proteinMax: string;
     carbsMax: string;
     fatMax: string;
+    waterGoal: string;
+    creatineEnabled: boolean;
     nationality: string;
   }) => Promise<void> | void;
 }) {
@@ -47,6 +53,8 @@ export default function SettingsModal({
   const [localProteinMax, setLocalProteinMax] = useState(proteinMax);
   const [localCarbsMax, setLocalCarbsMax] = useState(carbsMax);
   const [localFatMax, setLocalFatMax] = useState(fatMax);
+  const [localWaterGoal, setLocalWaterGoal] = useState(waterGoal);
+  const [localCreatineEnabled, setLocalCreatineEnabled] = useState(creatineEnabled);
   const [localNationality, setLocalNationality] = useState(nationality);
 
   useEffect(() => {
@@ -56,9 +64,21 @@ export default function SettingsModal({
       setLocalProteinMax(proteinMax);
       setLocalCarbsMax(carbsMax);
       setLocalFatMax(fatMax);
+      setLocalWaterGoal(waterGoal);
+      setLocalCreatineEnabled(creatineEnabled);
       setLocalNationality(nationality);
     }
-  }, [visible, email, calorieMax, proteinMax, carbsMax, fatMax, nationality]);
+  }, [
+    visible,
+    email,
+    calorieMax,
+    proteinMax,
+    carbsMax,
+    fatMax,
+    waterGoal,
+    creatineEnabled,
+    nationality,
+  ]);
 
   const isValidPositiveNumber = (value: string) => {
     const num = parseFloat(value.replace(',', '.'));
@@ -76,6 +96,9 @@ export default function SettingsModal({
     if (parseInt(localCarbsMax) > 100000) return t('settings.errorCarbsTooLarge');
     if (!isValidPositiveNumber(localFatMax)) return t('settings.errorFatPositive');
     if (parseInt(localFatMax) > 100000) return t('settings.errorFatTooLarge');
+    if (!isValidPositiveNumber(localWaterGoal)) return t('settings.errorWaterGoalPositive');
+    if (parseFloat(localWaterGoal.replace(',', '.')) > 100000)
+      return t('settings.errorWaterGoalTooLarge');
     if (localNationality.trim() === '') return t('settings.errorNationalityRequired');
     return null;
   };
@@ -219,6 +242,46 @@ export default function SettingsModal({
                 onChange={(e) => setLocalFatMax(e.target.value.replace(/[^0-9]/g, ''))}
               />
             </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                {t('settings.waterGoal')}
+              </label>
+              <input
+                type="text"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-xs sm:text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent block w-full p-2 sm:p-2.5"
+                value={localWaterGoal}
+                onChange={(e) => setLocalWaterGoal(e.target.value.replace(/[^0-9.,]/g, ''))}
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                {t('settings.trackCreatine')}
+              </label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setLocalCreatineEnabled(true)}
+                  className={`px-3 py-2 rounded-lg border text-sm cursor-pointer transition-colors ${
+                    localCreatineEnabled
+                      ? 'bg-[#3a3a3cff] text-white border-[#3a3a3cff]'
+                      : 'bg-white text-gray-700 border-gray-300'
+                  }`}
+                >
+                  {t('common.yes')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLocalCreatineEnabled(false)}
+                  className={`px-3 py-2 rounded-lg border text-sm cursor-pointer transition-colors ${
+                    !localCreatineEnabled
+                      ? 'bg-[#3a3a3cff] text-white border-[#3a3a3cff]'
+                      : 'bg-white text-gray-700 border-gray-300'
+                  }`}
+                >
+                  {t('common.no')}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         <div className="flex gap-2 sm:gap-3">
@@ -239,6 +302,8 @@ export default function SettingsModal({
                 proteinMax: localProteinMax,
                 carbsMax: localCarbsMax,
                 fatMax: localFatMax,
+                waterGoal: localWaterGoal,
+                creatineEnabled: localCreatineEnabled,
                 nationality: localNationality,
               });
 

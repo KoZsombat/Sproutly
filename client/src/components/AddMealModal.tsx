@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
-import type { FoodEntry } from '../types/types';
+import type { FoodEntry, CalEntry } from '../types/types';
 import Alert from './Alert';
 import { useTranslation } from 'react-i18next';
 
@@ -8,6 +8,7 @@ export default function AddMealModal({
   visible,
   onClose,
   food,
+  cals,
   onAdd,
   editMode = false,
   initialMealName = '',
@@ -16,6 +17,7 @@ export default function AddMealModal({
   visible: boolean;
   onClose: () => void;
   food: FoodEntry[];
+  cals?: CalEntry[];
   onAdd: (name: string, ingredients: { name: string; grams: string }[]) => void;
   editMode?: boolean;
   initialMealName?: string;
@@ -27,6 +29,8 @@ export default function AddMealModal({
   const [localMealName, setLocalMealName] = useState(initialMealName);
   const [localSelectedIngredients, setLocalSelectedIngredients] =
     useState<{ name: string; grams: string }[]>(initialIngredients);
+  const [showDuplicateMenu, setShowDuplicateMenu] = useState(false);
+  const [duplicateSearch, setDuplicateSearch] = useState('');
 
   const isValidPositiveNumber = (v: string) => {
     const num = parseFloat(v);
@@ -53,21 +57,21 @@ export default function AddMealModal({
     return null;
   };
 
-  const sortedFood = [...food]
-    .filter((item) => item.name.toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => {
-      if (editMode) {
-        const aIsSelected = localSelectedIngredients.some(
-          (i) => i.name === a.name && i.grams && parseFloat(i.grams) > 0
-        );
-        const bIsSelected = localSelectedIngredients.some(
-          (i) => i.name === b.name && i.grams && parseFloat(i.grams) > 0
-        );
-        if (aIsSelected && !bIsSelected) return -1;
-        if (!aIsSelected && bIsSelected) return 1;
-      }
-      return a.name.localeCompare(b.name);
-    });
+  const handleDuplicateMeal = (meal: CalEntry) => {
+    setLocalMealName(`${meal.name} (Copy)`);
+    setLocalSelectedIngredients(
+      meal.food.map((foodName, idx) => ({
+        name: foodName,
+        grams: meal.grams?.[idx] ?? '0',
+      }))
+    );
+    setShowDuplicateMenu(false);
+    setDuplicateSearch('');
+  };
+
+  const filteredMeals = (cals || [])
+    .filter((meal) => meal.name.toLowerCase().includes(duplicateSearch.toLowerCase()))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <div className="overflow-y-auto pb-[10vh] fixed pt-5 inset-0 bg-white z-20 overflow-hidden flex flex-col">
@@ -93,6 +97,41 @@ export default function AddMealModal({
             onChange={(e) => setLocalMealName(e.target.value)}
           />
         </div>
+        {!editMode && cals && cals.length > 0 && (
+          <div className="mt-4 sm:mt-6 mb-2 sm:mb-4">
+            <button
+              onClick={() => setShowDuplicateMenu(!showDuplicateMenu)}
+              className="w-full px-4 py-2 mb-2 border rounded-md border-gray-300 bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition-all"
+            >
+              {showDuplicateMenu ? 'Hide' : 'Duplicate Meal'}
+            </button>
+            {showDuplicateMenu && (
+              <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <input
+                  placeholder="Search meals..."
+                  className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 mb-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={duplicateSearch}
+                  onChange={(e) => setDuplicateSearch(e.target.value)}
+                />
+                <div className="space-y-1 max-h-[150px] overflow-y-auto">
+                  {filteredMeals.length > 0 ? (
+                    filteredMeals.map((meal, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleDuplicateMeal(meal)}
+                        className="w-full text-left px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100 border rounded-md border-gray-300 transition-all"
+                      >
+                        {meal.name}
+                      </button>
+                    ))
+                  ) : (
+                    <p className="text-sm text-gray-500 p-2">No meals found</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         <input
           placeholder={t('meal.searchIngredients')}
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 mb-4 sm:mb-6 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -100,34 +139,51 @@ export default function AddMealModal({
           onChange={(e) => setSearch(e.target.value)}
         />
         <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
-          {sortedFood.map((ingredient, idx) => {
-            const selected = localSelectedIngredients.find((i) => i.name === ingredient.name);
-            return (
-              <div
-                key={idx}
-                className="flex flex-row items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 rounded-lg border border-gray-200"
-              >
-                <span className="flex-1 font-medium text-gray-700 text-sm">{ingredient.name}</span>
-                <input
-                  type="numeric"
-                  placeholder={t('common.grams')}
-                  className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg w-20 sm:w-24 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={selected?.grams ?? ''}
-                  onChange={(e) => {
-                    const numeric = e.target.value.replace(/[^0-9]/g, '');
-                    setLocalSelectedIngredients((prev: { name: string; grams: string }[]) => {
-                      const exists = prev.find((i) => i.name === ingredient.name);
-                      if (exists)
-                        return prev.map((i) =>
-                          i.name === ingredient.name ? { ...i, grams: numeric } : i
-                        );
-                      return [...prev, { name: ingredient.name, grams: numeric }];
-                    });
-                  }}
-                />
-              </div>
-            );
-          })}
+          {[...food]
+            .filter((item) => item.name.toLowerCase().includes(search.toLowerCase()))
+            .sort((a, b) => {
+              if (editMode) {
+                const aIsSelected = localSelectedIngredients.some(
+                  (i) => i.name === a.name && i.grams && parseFloat(i.grams) > 0
+                );
+                const bIsSelected = localSelectedIngredients.some(
+                  (i) => i.name === b.name && i.grams && parseFloat(i.grams) > 0
+                );
+                if (aIsSelected && !bIsSelected) return -1;
+                if (!aIsSelected && bIsSelected) return 1;
+              }
+              return a.name.localeCompare(b.name);
+            })
+            .map((ingredient, idx) => {
+              const selected = localSelectedIngredients.find((i) => i.name === ingredient.name);
+              return (
+                <div
+                  key={idx}
+                  className="flex flex-row items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 rounded-lg border border-gray-200"
+                >
+                  <span className="flex-1 font-medium text-gray-700 text-sm">
+                    {ingredient.name}
+                  </span>
+                  <input
+                    type="numeric"
+                    placeholder={t('common.grams')}
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg w-20 sm:w-24 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    value={selected?.grams ?? ''}
+                    onChange={(e) => {
+                      const numeric = e.target.value.replace(/[^0-9]/g, '');
+                      setLocalSelectedIngredients((prev: { name: string; grams: string }[]) => {
+                        const exists = prev.find((i) => i.name === ingredient.name);
+                        if (exists)
+                          return prev.map((i) =>
+                            i.name === ingredient.name ? { ...i, grams: numeric } : i
+                          );
+                        return [...prev, { name: ingredient.name, grams: numeric }];
+                      });
+                    }}
+                  />
+                </div>
+              );
+            })}
         </div>
         <div className="flex gap-2 sm:gap-3">
           <button

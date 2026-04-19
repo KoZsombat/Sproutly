@@ -8,19 +8,11 @@ export default function AppendFoodModal({
   visible,
   onClose,
   cals,
-  mealGrams,
-  setMealGrams,
-  activeItem,
-  setActiveItem,
   onAddEaten,
 }: {
   visible: boolean;
   onClose: () => void;
   cals: CalEntry[];
-  mealGrams: string;
-  setMealGrams: (v: string) => void;
-  activeItem: string;
-  setActiveItem: (v: string) => void;
   onAddEaten: (name: string) => void;
 }) {
   const { t } = useTranslation();
@@ -29,18 +21,6 @@ export default function AppendFoodModal({
   const [alertType, setAlertType] = useState<'success' | 'error'>('error');
 
   if (!visible) return null;
-
-  const isValidPositiveNumber = (v: string) => {
-    const num = parseFloat(v);
-    return Number.isFinite(num) && num > 0;
-  };
-
-  const validateAppend = (name: string): string | null => {
-    if (activeItem !== name) return t('appendFood.errorEnterGrams');
-    if (!isValidPositiveNumber(mealGrams)) return t('appendFood.errorGramsPositive');
-    if (parseFloat(mealGrams) > 100000) return t('appendFood.errorGramsTooLarge');
-    return null;
-  };
 
   return (
     <div className="overflow-y-auto pb-[10vh] fixed pt-5 inset-0 bg-white z-20 overflow-hidden flex flex-col">
@@ -73,27 +53,11 @@ export default function AppendFoodModal({
                 key={i}
               >
                 <span className="flex-1 font-medium text-gray-700 text-sm">{f.name}</span>
-                <input
-                  type="numeric"
-                  placeholder={t('common.grams')}
-                  className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg w-16 sm:w-24 p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  defaultValue={0}
-                  onFocus={() => setActiveItem(f.name)}
-                  onChange={(e) => setMealGrams(e.target.value.replace(/[^0-9]/g, ''))}
-                />
                 <button
                   className="px-2 sm:px-4 py-1 sm:py-2 rounded-lg bg-[#3a3a3cff] text-white text-sm font-medium hover:bg-[#4a4a4cff] transition-all active:scale-95 cursor-pointer"
                   onClick={() => {
-                    const err = validateAppend(f.name);
-                    if (err) {
-                      setAlertMsg(err);
-                      setAlertType('error');
-                      return;
-                    }
                     setAlertMsg(t('appendFood.successAdded'));
                     setAlertType('success');
-                    setMealGrams('');
-                    setActiveItem('');
                     onAddEaten(f.name);
                   }}
                 >

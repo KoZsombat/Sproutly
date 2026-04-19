@@ -16,7 +16,7 @@ export default function TodaysCuisine({
   food: FoodEntry[];
   Clear: () => void;
   onOpenAppend: () => void;
-  onDeleteEaten: (name: string) => void;
+  onDeleteEaten: (id: number) => void;
 }) {
   const { t } = useTranslation();
 
@@ -58,7 +58,7 @@ export default function TodaysCuisine({
             meal.food.forEach((item) => {
               const foodItem = food.find((f) => f.name === item);
               if (foodItem) {
-                const factor = parseFloat(e.grams) / 100;
+                const factor = 1; // Now we always use 100g
                 allCals += foodItem.cal * factor;
                 allProtein += foodItem.protein * factor;
                 allCarbs += foodItem.carbs * factor;
@@ -69,7 +69,7 @@ export default function TodaysCuisine({
             return (
               <div key={i} className="flex rounded-xl m-1.5 p-2 bg-[#f2f2f2ff] items-center">
                 <div className="flex-1">
-                  <p className="text-sm sm:text-md font-bold uppercase">{meal.name}</p>
+                  <p className="text-sm sm:text-md font-bold uppercase">{e.name}</p>
                   <p className="text-xs sm:text-sm">
                     {t('stats.calories')}: {parseFloat(allCals.toFixed(2))}, {t('stats.protein')}:{' '}
                     {parseFloat(allProtein.toFixed(2))}, {t('stats.carbs')}:{' '}
@@ -81,7 +81,7 @@ export default function TodaysCuisine({
                   className={
                     'px-3 py-2 rounded-lg bg-[#3a3a3cff] hover:bg-[#4a4a4cff] text-white font-medium transition-all active:scale-95 cursor-pointer text-sm'
                   }
-                  onClick={() => onDeleteEaten(meal.name)}
+                  onClick={() => onDeleteEaten(e.id)}
                 >
                   {t('common.delete')}
                 </button>

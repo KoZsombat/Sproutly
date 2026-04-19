@@ -34,10 +34,18 @@ CREATE TABLE IF NOT EXISTS nut_values (
   protein  FLOAT   NOT NULL DEFAULT 100,
   carbs    FLOAT   NOT NULL DEFAULT 300,
   fat      FLOAT   NOT NULL DEFAULT 70,
+  water_goal FLOAT  NOT NULL DEFAULT 2,
+  creatine_enabled TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (id),
   CONSTRAINT fk_nut_user FOREIGN KEY (username) REFERENCES user (username)
     ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+
+ALTER TABLE nut_values
+  ADD COLUMN IF NOT EXISTS water_goal FLOAT NOT NULL DEFAULT 2;
+
+ALTER TABLE nut_values
+  ADD COLUMN IF NOT EXISTS creatine_enabled TINYINT(1) NOT NULL DEFAULT 1;
 
 -- ---------------------------------------------------------------
 -- Custom ingredients created by the user (per 100 g)
@@ -88,9 +96,32 @@ CREATE TABLE IF NOT EXISTS eaten_meal (
   id       INT          NOT NULL AUTO_INCREMENT,
   username VARCHAR(100) NOT NULL,
   meal     VARCHAR(255) NOT NULL,
-  gram     FLOAT        NOT NULL DEFAULT 100,
   PRIMARY KEY (id),
   CONSTRAINT fk_eaten_user FOREIGN KEY (username) REFERENCES user (username)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------
+-- Daily water tracking (reset on save day)
+-- ---------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS water_intake (
+  id       INT          NOT NULL AUTO_INCREMENT,
+  username VARCHAR(100) NOT NULL UNIQUE,
+  liters   FLOAT        NOT NULL DEFAULT 0,
+  PRIMARY KEY (id),
+  CONSTRAINT fk_water_user FOREIGN KEY (username) REFERENCES user (username)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------
+-- Daily creatine tracking (reset on save day)
+-- ---------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS creatine_intake (
+  id       INT          NOT NULL AUTO_INCREMENT,
+  username VARCHAR(100) NOT NULL UNIQUE,
+  done     TINYINT(1)   NOT NULL DEFAULT 0,
+  PRIMARY KEY (id),
+  CONSTRAINT fk_creatine_user FOREIGN KEY (username) REFERENCES user (username)
     ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 

@@ -179,7 +179,7 @@ export default function Index() {
   return (
     <>
       {logged ? (
-        <div className="flex items-center justify-center w-full h-[100vh] bg-gray-200">
+        <div className="w-full min-h-screen bg-gray-200 flex justify-center">
           <div className="2xl:w-[65vw] w-full h-full">
             <MainApp onLogout={handleLogout} />
           </div>

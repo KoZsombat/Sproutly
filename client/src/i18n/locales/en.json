@@ -18,6 +18,8 @@
     "proteinGoal": "Protein Goal (g):",
     "carbsGoal": "Carbs Goal (g):",
     "fatGoal": "Fat Goal (g):",
+    "waterGoal": "Water Goal (L):",
+    "trackCreatine": "Track Creatine:",
     "update": "Update Settings",
     "errorEmailRequired": "Email is required.",
     "errorEmailInvalid": "Invalid email format.",
@@ -29,6 +31,8 @@
     "errorCarbsTooLarge": "Carbs must be less than or equal to 100000.",
     "errorFatPositive": "Fat must be a positive number.",
     "errorFatTooLarge": "Fat must be less than or equal to 100000.",
+    "errorWaterGoalPositive": "Water goal must be a positive number.",
+    "errorWaterGoalTooLarge": "Water goal must be less than or equal to 100000.",
     "errorNationalityRequired": "Nationality is required.",
     "downloadTitle": "Install App",
     "downloadText": "For quick access, add this app to your home screen. Look for the 'Add to Home Screen' or 'Install' option in your browser menu."
@@ -42,6 +46,22 @@
   "todaysCuisine": {
     "title": "Today's Cuisine",
     "empty": "Nothing here yet"
+  },
+  "creatine": {
+    "title": "Creatine",
+    "doneBadge": "Done",
+    "pendingBadge": "Pending",
+    "done": "You've taken your creatine.",
+    "pending": "You haven't taken your creatine yet.",
+    "markTaken": "Mark as taken",
+    "undo": "Undo"
+  },
+  "water": {
+    "title": "Water",
+    "goal": "Goal: {{liters}}L",
+    "status": "{{bottles}} bottles",
+    "addBottle": "Add one bottle (0.25L)",
+    "hint": "Tap the faded bottle to add 0.25L"
   },
   "ingredient": {
     "editTitle": "Edit Ingredient",

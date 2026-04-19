@@ -15,8 +15,8 @@ export type FoodEntry = {
 };
 
 export type EatenEntry = {
+  id: number;
   name: string;
-  grams: string;
 };
 
 export type EatenHistory = {

@@ -8,6 +8,7 @@ import mealRoutes from './routes/mealRoutes.js';
 import eatenRoutes from './routes/eatenRoutes.js';
 import historyRoutes from './routes/historyRoutes.js';
 import productRoutes from './routes/productRoutes.js';
+import trackingRoutes from './routes/trackingRoutes.js';
 
 const router = express.Router();
 
@@ -21,5 +22,6 @@ router.use(mealRoutes);
 router.use(eatenRoutes);
 router.use(historyRoutes);
 router.use(productRoutes);
+router.use(trackingRoutes);
 
 export default router;

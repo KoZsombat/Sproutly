@@ -5,11 +5,18 @@ import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import authRouter from './src/auth.js';
 import apiRouter from './src/routes.js';
+import { ensureRuntimeSchema } from './src/utils/ensureRuntimeSchema.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const safeIpKey = (req) => {
+  const ip =
+    req?.ip || req?.headers?.['x-forwarded-for'] || req?.socket?.remoteAddress;
+  return typeof ip === 'string' ? ip.replace(/:\d+$/, '') : 'unknown';
+};
 
 app.use(helmet());
 
@@ -30,10 +37,7 @@ const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: 'Too many requests, please try again later',
-  keyGenerator: (req) => {
-    const clientIp = req.ip.replace(/:\d+$/, '');
-    return clientIp;
-  },
+  keyGenerator: safeIpKey,
   validate: { xForwardedForHeader: false, keyGeneratorIpFallback: false },
 });
 
@@ -44,10 +48,7 @@ const apiLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: 'Too many requests, please try again later',
-  keyGenerator: (req) => {
-    const clientIp = req.ip.replace(/:\d+$/, '');
-    return clientIp;
-  },
+  keyGenerator: safeIpKey,
   validate: { xForwardedForHeader: false, keyGeneratorIpFallback: false },
 });
 
@@ -67,6 +68,7 @@ app.use((err, req, res) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
+  await ensureRuntimeSchema();
   console.log(`Server is running on port ${PORT}`);
 });

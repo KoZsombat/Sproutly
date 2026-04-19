@@ -46,6 +46,8 @@ router.get('/data', (req, res) => {
         protein: nutritionResult[0].protein,
         carbs: nutritionResult[0].carbs,
         fat: nutritionResult[0].fat,
+        waterGoal: nutritionResult[0].water_goal,
+        creatineEnabled: Boolean(nutritionResult[0].creatine_enabled),
         email,
         nationality,
       });
@@ -69,6 +71,12 @@ router.put(
     body('fat')
       .isFloat({ min: 0, max: 100000 })
       .withMessage('Fat must be between 0 and 100000'),
+    body('waterGoal')
+      .isFloat({ min: 0, max: 100000 })
+      .withMessage('Water goal must be between 0 and 100000'),
+    body('creatineEnabled')
+      .isBoolean()
+      .withMessage('Creatine enabled must be true or false'),
     body('nationality').notEmpty().withMessage('Nationality is required'),
   ],
   (req, res) => {
@@ -83,19 +91,40 @@ router.put(
     }
 
     const user = req.username;
-    const { email, nationality, calories, protein, carbs, fat } = req.body;
+    const {
+      email,
+      nationality,
+      calories,
+      protein,
+      carbs,
+      fat,
+      waterGoal,
+      creatineEnabled,
+    } = req.body;
 
     const updateNutrition = () =>
       new Promise((resolve, reject) => {
         const sql =
-          'UPDATE nut_values SET calories = ?, protein = ?, carbs = ?, fat = ? WHERE username = ?';
-        con.query(sql, [calories, protein, carbs, fat, user], (err) => {
-          if (err)
-            return reject(
-              'Failed to update nutrition values. Please try again later.'
-            );
-          resolve();
-        });
+          'UPDATE nut_values SET calories = ?, protein = ?, carbs = ?, fat = ?, water_goal = ?, creatine_enabled = ? WHERE username = ?';
+        con.query(
+          sql,
+          [
+            calories,
+            protein,
+            carbs,
+            fat,
+            waterGoal,
+            creatineEnabled ? 1 : 0,
+            user,
+          ],
+          (err) => {
+            if (err)
+              return reject(
+                'Failed to update nutrition values. Please try again later.'
+              );
+            resolve();
+          }
+        );
       });
 
     const updateEmail = () =>

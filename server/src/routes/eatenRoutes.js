@@ -6,12 +6,7 @@ const router = express.Router();
 
 router.post(
   '/eaten',
-  [
-    body('meal').trim().notEmpty().withMessage('Meal name is required'),
-    body('gram')
-      .isFloat({ min: 0 })
-      .withMessage('Grams must be a positive number'),
-  ],
+  [body('meal').trim().notEmpty().withMessage('Meal name is required')],
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -19,28 +14,27 @@ router.post(
     }
 
     const user = req.username;
-    const { meal, gram } = req.body;
+    const { meal } = req.body;
 
-    const sql =
-      'INSERT INTO eaten_meal (username, meal, gram) VALUES (?, ?, ?)';
-    con.query(sql, [user, meal, gram], (err) => {
+    const sql = 'INSERT INTO eaten_meal (username, meal) VALUES (?, ?)';
+    con.query(sql, [user, meal], (err, result) => {
       if (err) {
         console.error('Eaten add error');
         return res
           .status(500)
           .json({ error: 'Could not add eaten meal. Please try again later.' });
       }
-      return res.json({ success: true });
+      return res.json({ success: true, id: result.insertId });
     });
   }
 );
 
 router.delete('/eaten', (req, res) => {
   const user = req.username;
-  const { meal } = req.body;
+  const { id } = req.body;
 
-  const sql = 'DELETE FROM eaten_meal WHERE username = ? AND meal = ?';
-  con.query(sql, [user, meal], (err) => {
+  const sql = 'DELETE FROM eaten_meal WHERE username = ? AND id = ?';
+  con.query(sql, [user, id], (err) => {
     if (err) {
       console.error('Clear eaten error');
       return res.status(500).json({
@@ -54,15 +48,37 @@ router.delete('/eaten', (req, res) => {
 router.delete('/eaten/all', (req, res) => {
   const user = req.username;
 
-  const sql = 'DELETE FROM eaten_meal WHERE username = ?';
-  con.query(sql, [user], (err) => {
-    if (err) {
+  const clearEatenSql = 'DELETE FROM eaten_meal WHERE username = ?';
+  const clearWaterSql = 'DELETE FROM water_intake WHERE username = ?';
+  const clearCreatineSql = 'DELETE FROM creatine_intake WHERE username = ?';
+
+  con.query(clearEatenSql, [user], (eatenErr) => {
+    if (eatenErr) {
       console.error('Clear eaten error');
       return res.status(500).json({
         error: 'Could not clear eaten meals. Please try again later.',
       });
     }
-    return res.json({ success: true });
+
+    con.query(clearWaterSql, [user], (waterErr) => {
+      if (waterErr) {
+        console.error('Clear water tracking error');
+        return res.status(500).json({
+          error: 'Could not clear water tracking. Please try again later.',
+        });
+      }
+
+      con.query(clearCreatineSql, [user], (creatineErr) => {
+        if (creatineErr) {
+          console.error('Clear creatine tracking error');
+          return res.status(500).json({
+            error: 'Could not clear creatine tracking. Please try again later.',
+          });
+        }
+
+        return res.json({ success: true });
+      });
+    });
   });
 });
 

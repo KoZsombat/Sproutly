@@ -18,7 +18,8 @@ const loginLimiter = rateLimit({
   max: 5, // 5 login attempts
   message: 'Too many login attempts, please try again later',
   keyGenerator: (req) => {
-    const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const ip =
+      req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     return typeof ip === 'string' ? ip.replace(/:\d+$/, '') : 'unknown';
   },
   validate: { xForwardedForHeader: false, keyGeneratorIpFallback: false },
@@ -29,7 +30,8 @@ const registerLimiter = rateLimit({
   max: 10, // 10 registration attempts
   message: 'Too many registration attempts, please try again later',
   keyGenerator: (req) => {
-    const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const ip =
+      req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     return typeof ip === 'string' ? ip.replace(/:\d+$/, '') : 'unknown';
   },
   validate: { xForwardedForHeader: false, keyGeneratorIpFallback: false },
@@ -52,7 +54,7 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: `${process.env.BACKEND_URL}/auth/google/callback`,
-	  proxy: true
+      proxy: true,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -84,8 +86,8 @@ passport.use(
         await con
           .promise()
           .query(
-            'INSERT IGNORE INTO nut_values (username, calories, protein, carbs, fat) VALUES (?, ?, ?, ?, ?)',
-            [user.username, 2000, 100, 300, 70]
+            'INSERT IGNORE INTO nut_values (username, calories, protein, carbs, fat, water_goal, creatine_enabled) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [user.username, 2000, 100, 300, 70, 2, 1]
           );
         done(null, user);
       } catch (err) {
@@ -210,8 +212,8 @@ router.post(
 
             const userId = result.insertId;
 
-            const sql3 = `INSERT INTO nut_values (username, calories, protein, carbs, fat) VALUES (?, ?, ?, ?, ?)`;
-            con.query(sql3, [name, 2000, 100, 300, 70], (err) => {
+            const sql3 = `INSERT INTO nut_values (username, calories, protein, carbs, fat, water_goal, creatine_enabled) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+            con.query(sql3, [name, 2000, 100, 300, 70, 2, 1], (err) => {
               if (err) {
                 console.error('Nutrition values creation error:', err);
                 return res

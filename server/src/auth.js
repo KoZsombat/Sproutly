@@ -1,7 +1,6 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
 import rateLimit from 'express-rate-limit';
-import session from 'express-session';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import dotenv from 'dotenv';
@@ -36,17 +35,6 @@ const registerLimiter = rateLimit({
   },
   validate: { xForwardedForHeader: false, keyGeneratorIpFallback: false },
 });
-
-router.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-  })
-);
-
-router.use(passport.initialize());
-router.use(passport.session());
 
 passport.use(
   new GoogleStrategy(

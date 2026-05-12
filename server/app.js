@@ -6,6 +6,8 @@ import dotenv from 'dotenv';
 import authRouter from './src/auth.js';
 import apiRouter from './src/routes.js';
 import { ensureRuntimeSchema } from './src/utils/ensureRuntimeSchema.js';
+import session from 'express-session';
+import passport from 'passport';
 
 dotenv.config();
 
@@ -29,6 +31,21 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.set('trust proxy', 1);
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false, // ← false, mert csak auth-nál kell
+    cookie: {
+      secure: true, // HTTPS esetén kell
+      sameSite: 'lax', // ← Google redirect miatt 'lax' kell, NEM 'strict'
+      httpOnly: true,
+    },
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Auth: 10 requests per minute
 const authLimiter = rateLimit({

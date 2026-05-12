@@ -12,9 +12,11 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
-	  workbox: {
-		maximumFileSizeToCacheInBytes: 15 * 1024 * 1024,
-	  },
+      workbox: {
+        maximumFileSizeToCacheInBytes: 15 * 1024 * 1024,
+        navigateFallback: 'index.html',
+        navigateFallbackDenylist: [/^\/auth/, /^\/api/],
+      },
       manifest: {
         name: 'Nutrition App',
         short_name: 'NutritionApp',

@@ -231,14 +231,14 @@ export default function Index() {
                   >
                     {t('login.loginButton')}
                   </button>
-                  {/* <button
+                  <button
                     className="bg-red-500 mt-2 sm:mt-4 w-full p-2 sm:p-3 rounded-lg text-white font-medium text-sm sm:text-base hover:bg-red-600 transition-all cursor-pointer"
                     onClick={() =>
                       (window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`)
                     }
                   >
                     {t('login.googleLogin')}
-                  </button> */}
+                  </button>
                 </div>
               ) : (
                 <div className="space-y-2 sm:space-y-3">
@@ -272,14 +272,14 @@ export default function Index() {
                   >
                     {t('login.registerButton')}
                   </button>
-                  {/* <button
+                  <button
                     className="bg-red-500 mt-2 sm:mt-4 w-full p-2 sm:p-3 rounded-lg text-white font-medium text-sm sm:text-base hover:bg-red-600 transition-all cursor-pointer"
                     onClick={() =>
                       (window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`)
                     }
                   >
                     {t('login.googleLogin')}
-                  </button> */}
+                  </button>
                 </div>
               )}
             </div>

@@ -33,7 +33,7 @@ export default function Index() {
           setlogged(false);
           return;
         }
-        const res = await fetch(`${apiUrl}/auth/userInDb`, {
+        const res = await fetch(`/auth/userInDb`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ export default function Index() {
         password: loginPass,
       };
       try {
-        const response = await fetch(`${apiUrl}/auth/login`, {
+        const response = await fetch(`/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -112,7 +112,7 @@ export default function Index() {
         email: registerEmail,
         password: registerPass,
       };
-      const response = await fetch(`${apiUrl}/auth/register`, {
+      const response = await fetch(`/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

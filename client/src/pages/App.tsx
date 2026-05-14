@@ -112,7 +112,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         return;
       }
 
-      const response = await fetch(`${apiUrl}/auth/verifyToken`, {
+      const response = await fetch(`/auth/verifyToken`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -137,7 +137,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
   const Load = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/api/data`, {
+      const response = await fetch(`/api/data`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -174,7 +174,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
   }) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/api/data`, {
+      const response = await fetch(`/api/data`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -219,7 +219,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
   const LoadFood = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/api/food`, {
+      const response = await fetch(`/api/food`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -236,7 +236,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
       setEaten(data.eaten);
 
       try {
-        const historyResponse = await fetch(`${apiUrl}/api/history`, {
+        const historyResponse = await fetch(`/api/history`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -260,7 +260,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
   const LoadTracking = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/api/tracking`, {
+      const response = await fetch(`/api/tracking`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -288,7 +288,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     setWaterIntake(liters);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/api/tracking/water`, {
+      const response = await fetch(`/api/tracking/water`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -313,7 +313,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     setCreatineDone(done);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/api/tracking/creatine`, {
+      const response = await fetch(`/api/tracking/creatine`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -352,7 +352,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     ) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${apiUrl}/api/ingredient`, {
+        const response = await fetch(`/api/ingredient`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -417,7 +417,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     ) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${apiUrl}/api/ingredient`, {
+        const response = await fetch(`/api/ingredient`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -457,7 +457,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
   const DeleteIngerdient = async (id: number) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/api/ingredient`, {
+      const response = await fetch(`/api/ingredient`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -578,7 +578,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
   const AddMeal = async (mealName: string, foodList: string[]) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/api/meal`, {
+      const response = await fetch(`/api/meal`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -605,7 +605,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
   const EditMeal = async (id: number, newName: string, foodList: string[]) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/api/meal`, {
+      const response = await fetch(`/api/meal`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -632,7 +632,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
   const DeleteMeal = async (meal: CalEntry) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/api/meal`, {
+      const response = await fetch(`/api/meal`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -660,7 +660,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     try {
       if (mealName === '') return;
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/api/eaten`, {
+      const response = await fetch(`/api/eaten`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -688,7 +688,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
   const handleDeleteEaten = async (id: number) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/api/eaten`, {
+      const response = await fetch(`/api/eaten`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -715,7 +715,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
   const Clear = async () => {
     try {
       const token = localStorage.getItem('token');
-      const clearResponse = await fetch(`${apiUrl}/api/eaten/all`, {
+      const clearResponse = await fetch(`/api/eaten/all`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -730,7 +730,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         addToast(t('tracking.toastSaveFailed'), 'error');
         return;
       }
-      const historyResponse = await fetch(`${apiUrl}/api/history`, {
+      const historyResponse = await fetch(`/api/history`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -764,7 +764,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
   const clearHistory = async (keepDates: string[]) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/api/history`, {
+      const response = await fetch(`/api/history`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

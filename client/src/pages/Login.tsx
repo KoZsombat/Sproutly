@@ -170,7 +170,7 @@ export default function Index() {
       setRegisterPass('');
       setAlertMsg(t('login.successLogout'));
       setAlertType('success');
-      document.location.href = `${import.meta.env.VITE_API_URL}/auth/logout`;
+      document.location.href = `/auth/logout`;
     } catch (e) {
       console.error('Failed to remove user data', e);
     }
@@ -233,9 +233,7 @@ export default function Index() {
                   </button>
                   <button
                     className="bg-red-500 mt-2 sm:mt-4 w-full p-2 sm:p-3 rounded-lg text-white font-medium text-sm sm:text-base hover:bg-red-600 transition-all cursor-pointer"
-                    onClick={() =>
-                      (window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`)
-                    }
+                    onClick={() => (window.location.href = `/auth/google`)}
                   >
                     {t('login.googleLogin')}
                   </button>
@@ -274,9 +272,7 @@ export default function Index() {
                   </button>
                   <button
                     className="bg-red-500 mt-2 sm:mt-4 w-full p-2 sm:p-3 rounded-lg text-white font-medium text-sm sm:text-base hover:bg-red-600 transition-all cursor-pointer"
-                    onClick={() =>
-                      (window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`)
-                    }
+                    onClick={() => (window.location.href = `/auth/google`)}
                   >
                     {t('login.googleLogin')}
                   </button>

@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import authRouter from './src/auth.js';
 import apiRouter from './src/routes.js';
 import { ensureRuntimeSchema } from './src/utils/ensureRuntimeSchema.js';
+import { warmupPool } from './src/db.js';
 import session from 'express-session';
 import passport from 'passport';
 
@@ -80,12 +81,28 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   console.error('Server error:', err);
   res.status(500).json({ error: 'Internal server error' });
 });
 
-app.listen(PORT, async () => {
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled promise rejection:', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught exception:', err);
+  process.exit(1);
+});
+
+async function start() {
+  await warmupPool();
   await ensureRuntimeSchema();
-  console.log(`Server is running on port ${PORT}`);
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
+
+start().catch((err) => {
+  console.error('Fatal startup error:', err);
+  process.exit(1);
 });

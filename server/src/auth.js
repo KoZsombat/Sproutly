@@ -108,21 +108,12 @@ router.get(
   passport.authenticate('google', {
     failureRedirect: `${process.env.FRONTEND_URL}/`,
   }),
-  async (req, res) => {
-    try {
-      const [results] = await con
-        .promise()
-        .query('SELECT * FROM user WHERE google_id = ?', [req.user.google_id]);
-      if (!results || results.length === 0) {
-        return res.redirect(`${process.env.FRONTEND_URL}/`);
-      }
-      const user = results[0];
-      const token = generateToken(user);
-      res.redirect(`${process.env.FRONTEND_URL}/?token=${token}`);
-    } catch (err) {
-      console.error('Google auth query error:', err);
+  (req, res) => {
+    if (!req.user) {
       return res.redirect(`${process.env.FRONTEND_URL}/`);
     }
+    const token = generateToken(req.user);
+    res.redirect(`${process.env.FRONTEND_URL}/?token=${token}`);
   }
 );
 

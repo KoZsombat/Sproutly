@@ -12,6 +12,12 @@ const con = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
+  connectTimeout: 10000,
 });
+
+export async function warmupPool() {
+  const conn = await con.promise().getConnection();
+  conn.release();
+}
 
 export default con;

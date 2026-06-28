@@ -3,26 +3,53 @@ import { LuLogOut } from 'react-icons/lu';
 import { useTranslation } from 'react-i18next';
 
 export default function Header({
+  username,
   onOpenSettings,
   onLogout,
-}: { onOpenSettings: () => void } & { onLogout: () => void }) {
-  const { t } = useTranslation();
+}: { username?: string } & { onOpenSettings: () => void } & { onLogout: () => void }) {
+  const { t, i18n } = useTranslation();
+
+  const now = new Date();
+  const dateLine = now.toLocaleDateString(i18n.language || undefined, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  const hour = now.getHours();
+  const greet =
+    hour < 12
+      ? t('header.greetMorning')
+      : hour < 18
+        ? t('header.greetAfternoon')
+        : t('header.greetEvening');
+
+  const name = username?.trim();
+  const greeting = name
+    ? t('header.greeting', { greet, name })
+    : t('header.greetingNoName', { greet });
 
   return (
-    <div className="pt-5 flex flex-row justify-between items-center mx-2 my-2 mb-5 sm:m-5 sm:mt-8 sm:mb-0 gap-2">
-      <p className="text-3xl sm:text-4xl font-bold relative">{t('header.title')}</p>
-      <div className="flex items-center gap-1 sm:gap-2">
-        <div className="bg-white rounded-lg text-2 relative shadow-sm p-2 sm:p-2 flex items-center justify-center bg-[#f2f2f2ff] hover:bg-gray-300 transition-colors cursor-pointer">
-          <button className="flex text-sm sm:text-base gap-1 sm:gap-2" onClick={onLogout}>
-            <LuLogOut size={28} color="black" />
-            <p className="hidden sm:block">{t('header.logout')}</p>
-          </button>
-        </div>
-        <div className="bg-white rounded-lg text-2 relative shadow-sm p-2 sm:p-2 flex items-center justify-center bg-[#f2f2f2ff] hover:bg-gray-300 transition-colors cursor-pointer">
-          <button onClick={onOpenSettings}>
-            <IoSettingsOutline size={28} color="black" />
-          </button>
-        </div>
+    <div className="flex flex-row justify-between items-start gap-3 px-4 pt-7 pb-4 sm:px-6 sm:pt-9">
+      <div className="min-w-0">
+        <p className="num text-xs uppercase tracking-wider text-muted">{dateLine}</p>
+        <h1 className="mt-1 text-3xl sm:text-4xl font-bold text-ink truncate">{greeting}</h1>
+      </div>
+      <div className="flex items-center gap-2 shrink-0">
+        <button
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-leaf-100 text-leaf-700 border border-leaf-200 hover:bg-leaf-200 transition-colors cursor-pointer"
+          onClick={onLogout}
+          aria-label={t('header.logout')}
+        >
+          <LuLogOut size={20} />
+        </button>
+        <button
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-leaf-100 text-leaf-700 border border-leaf-200 hover:bg-leaf-200 transition-colors cursor-pointer"
+          onClick={onOpenSettings}
+          aria-label={t('header.settings')}
+        >
+          <IoSettingsOutline size={20} />
+        </button>
       </div>
     </div>
   );

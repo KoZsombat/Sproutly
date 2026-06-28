@@ -18,12 +18,12 @@ export default defineConfig({
         navigateFallbackDenylist: [/^\/auth/, /^\/api/],
       },
       manifest: {
-        name: 'Nutrition App',
-        short_name: 'NutritionApp',
+        name: 'Sproutly',
+        short_name: 'Sproutly',
         start_url: '/',
         display: 'standalone',
-        background_color: '#ffffff',
-        theme_color: '#3a3a3c',
+        background_color: '#fbfaf5',
+        theme_color: '#1fa55c',
         icons: [
           {
             src: '/pwa-192x192.png',

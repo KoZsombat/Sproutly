@@ -74,25 +74,25 @@ export default function AddMealModal({
     .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <div className="overflow-y-auto pb-[10vh] fixed pt-5 inset-0 bg-white z-20 overflow-hidden flex flex-col">
-      <div className="flex flex-row justify-between items-center px-3 sm:px-6 py-2 sm:py-4 border-b border-gray-200 bg-white flex-shrink-0">
-        <p className="text-3xl sm:text-4xl font-bold text-gray-900">
+    <div className="modal-panel overflow-y-auto pb-[10vh] fixed pt-5 inset-0 z-20 overflow-hidden flex flex-col">
+      <div className="flex flex-row justify-between items-center px-3 sm:px-6 py-2 sm:py-4 border-b border-line bg-paper flex-shrink-0">
+        <p className="text-3xl sm:text-4xl font-bold font-display text-ink">
           {editMode ? t('meal.editTitle') : t('meal.createTitle')}
         </p>
         <button
-          className="hover:bg-gray-100 rounded-lg p-2 transition-colors cursor-pointer"
+          className="hover:bg-leaf-50 text-ink rounded-full p-2 transition-colors cursor-pointer"
           onClick={onClose}
           aria-label={t('common.close')}
         >
-          <IoCloseOutline size={28} color="#000" />
+          <IoCloseOutline size={28} />
         </button>
       </div>
       <div className="overflow-y-auto flex-1 p-3 sm:p-6 max-w-2xl mx-auto w-full">
         {errorMsg && <Alert message={errorMsg} onClose={() => setErrorMsg(null)} />}
         <div className="mb-4 sm:mb-6">
-          <p className="block mb-2 text-sm font-medium text-gray-900">{t('meal.mealName')}</p>
+          <p className="block mb-2 text-sm font-medium text-ink-2">{t('meal.mealName')}</p>
           <input
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="field text-sm"
             value={localMealName}
             onChange={(e) => setLocalMealName(e.target.value)}
           />
@@ -101,15 +101,15 @@ export default function AddMealModal({
           <div className="mt-4 sm:mt-6 mb-2 sm:mb-4">
             <button
               onClick={() => setShowDuplicateMenu(!showDuplicateMenu)}
-              className="w-full px-4 py-2 mb-2 border rounded-md border-gray-300 bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition-all"
+              className="w-full px-4 py-2 mb-2 rounded-full bg-leaf-50 text-leaf-700 text-sm font-semibold hover:bg-leaf-100 transition-all"
             >
               {showDuplicateMenu ? t('meal.hideDuplicate') : t('meal.duplicateMeal')}
             </button>
             {showDuplicateMenu && (
-              <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <div className="p-3 bg-cream rounded-xl border border-line">
                 <input
                   placeholder={t('meal.searchMeals')}
-                  className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 mb-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="field bg-white text-sm mb-2"
                   value={duplicateSearch}
                   onChange={(e) => setDuplicateSearch(e.target.value)}
                 />
@@ -119,13 +119,13 @@ export default function AddMealModal({
                       <button
                         key={idx}
                         onClick={() => handleDuplicateMeal(meal)}
-                        className="w-full text-left px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100 border rounded-md border-gray-300 transition-all"
+                        className="w-full text-left px-3 py-2 rounded-lg text-sm text-ink-2 bg-white hover:bg-leaf-50 border border-line transition-all"
                       >
                         {meal.name}
                       </button>
                     ))
                   ) : (
-                    <p className="text-sm text-gray-500 p-2">{t('meal.noMealsFound')}</p>
+                    <p className="text-sm text-muted p-2">{t('meal.noMealsFound')}</p>
                   )}
                 </div>
               </div>
@@ -134,7 +134,7 @@ export default function AddMealModal({
         )}
         <input
           placeholder={t('meal.searchIngredients')}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 mb-4 sm:mb-6 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="field text-sm mb-4 sm:mb-6"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -159,15 +159,13 @@ export default function AddMealModal({
               return (
                 <div
                   key={idx}
-                  className="flex flex-row items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 rounded-lg border border-gray-200"
+                  className="flex flex-row items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-white rounded-xl border border-line shadow-soft"
                 >
-                  <span className="flex-1 font-medium text-gray-700 text-sm">
-                    {ingredient.name}
-                  </span>
+                  <span className="flex-1 font-medium text-ink text-sm">{ingredient.name}</span>
                   <input
                     type="numeric"
                     placeholder={t('common.grams')}
-                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg w-20 sm:w-24 p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="field w-20 sm:w-24 text-sm"
                     value={selected?.grams ?? ''}
                     onChange={(e) => {
                       const numeric = e.target.value.replace(/[^0-9]/g, '');
@@ -187,7 +185,7 @@ export default function AddMealModal({
         </div>
         <div className="flex gap-2 sm:gap-3">
           <button
-            className={`flex-1 px-4 py-3 rounded-lg ${editMode ? 'bg-[#5a5a5cff] hover:bg-[#6a6a6cff]' : 'bg-[#3a3a3cff] hover:bg-[#4a4a4cff]'} text-white font-medium transition-all active:scale-95 cursor-pointer`}
+            className="flex-1 px-4 py-3 rounded-full bg-leaf-500 hover:bg-leaf-600 text-white font-semibold transition-all active:scale-95 cursor-pointer"
             onClick={() => {
               const err = validateMeal();
               if (err) {
@@ -205,7 +203,7 @@ export default function AddMealModal({
             {editMode ? t('meal.saveChanges') : t('meal.createMeal')}
           </button>
           <button
-            className="flex-1 px-4 py-3 rounded-lg border border-gray-300 text-gray-700 font-medium bg-gray-200 hover:bg-gray-50 transition-all cursor-pointer"
+            className="flex-1 px-4 py-3 rounded-full border border-line text-ink-2 font-semibold bg-white hover:bg-leaf-50 transition-all cursor-pointer"
             onClick={onClose}
           >
             {t('common.cancel')}

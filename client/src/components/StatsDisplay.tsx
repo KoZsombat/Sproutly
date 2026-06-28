@@ -1,5 +1,6 @@
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import { FaCheck, FaTriangleExclamation } from 'react-icons/fa6';
 import MacroBar from './MacroBar';
 import { useTranslation } from 'react-i18next';
 
@@ -12,6 +13,7 @@ export default function StatsDisplay({
   proteinMax,
   carbsMax,
   fatMax,
+  mealsEaten = 0,
 }: {
   calories: number;
   protein: number;
@@ -21,42 +23,80 @@ export default function StatsDisplay({
   proteinMax: string;
   carbsMax: string;
   fatMax: string;
+  mealsEaten?: number;
 }) {
   const { t } = useTranslation();
 
+  const goal = Number(calorieMax);
+  const hasGoal = goal > 0;
+  const percent = hasGoal ? (calories / goal) * 100 : 0;
+  const isOver = percent > 100;
+
+  const pathColor = !hasGoal ? 'rgba(255,255,255,0.18)' : isOver ? 'var(--color-sun)' : '#ffffff';
+
   return (
-    <div className="flex flex-row items-center justify-center bg-white mx-3 my-2 sm:m-5 p-2 sm:p-3 shadow-sm rounded-xl gap-3">
-      <div
-        className="relative flex flex-col text-center justify-center"
-        style={{ width: 120, height: 120 }}
-      >
-        <div className="absolute" style={{ top: 0, left: 0 }}>
-          <div style={{ width: 120, height: 120, borderRadius: 20 }}>
-            <CircularProgressbar
-              value={Number(calorieMax) === 0 ? 0 : (calories / Number(calorieMax)) * 100}
-              strokeWidth={12}
-              styles={buildStyles({
-                pathColor:
-                  Number(calorieMax) === 0
-                    ? 'rgb(229, 231, 235)'
-                    : (calories / Number(calorieMax)) * 100 > 100
-                      ? 'red'
-                      : 'rgb(48, 48, 50)',
-                trailColor: 'rgb(229, 231, 235)',
-                strokeLinecap: 'round',
-              })}
-            />
-          </div>
-        </div>
-        <p className="font-bold text-center text-sm sm:text-xs">{t('stats.calories')}</p>
-        <p className="text-center text-sm sm:text-xs">
-          {calories} / {calorieMax}
-        </p>
+    <div className="relative overflow-hidden bg-linear-to-br from-leaf-600 to-leaf-800 mx-4 my-3 sm:mx-6 p-4 sm:p-5 shadow-card rounded-2xl">
+      <div className="pointer-events-none absolute -top-20 -right-20 h-64 w-64 rounded-full bg-white/10" />
+      <div className="relative flex items-center justify-between mb-4">
+        <h2 className="text-xl sm:text-2xl font-bold text-white">{t('stats.today')}</h2>
+        <span className="text-sm text-leaf-200">
+          {t('stats.mealsCount', { count: mealsEaten })}
+        </span>
       </div>
-      <div className="rounded overflow-hidden flex-1 left-0">
-        <MacroBar label={t('stats.protein')} current={protein} max={proteinMax} />
-        <MacroBar label={t('stats.carbs')} current={carbs} max={carbsMax} />
-        <MacroBar label={t('stats.fat')} current={fat} max={fatMax} />
+
+      <div className="relative flex flex-row items-center gap-4 sm:gap-6">
+        <div className="relative shrink-0" style={{ width: 116, height: 116 }}>
+          <CircularProgressbar
+            value={hasGoal ? Math.min(percent, 100) : 0}
+            strokeWidth={11}
+            styles={buildStyles({
+              pathColor,
+              trailColor: 'rgba(255,255,255,0.18)',
+              strokeLinecap: 'round',
+            })}
+          />
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <p className="num text-4xl sm:text-5xl font-bold text-white">
+            {Math.round(calories)}
+            <span className="text-lg font-medium text-leaf-200"> {t('stats.kcal')}</span>
+          </p>
+          <p className="text-sm text-leaf-200 mt-0.5">{t('stats.ofGoal', { goal: calorieMax })}</p>
+          {hasGoal &&
+            (isOver ? (
+              <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs font-semibold text-berry">
+                <FaTriangleExclamation size={10} />
+                {t('stats.overLimit')}
+              </span>
+            ) : (
+              <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs font-semibold text-leaf-700">
+                <FaCheck size={10} />
+                {t('stats.onTrack')}
+              </span>
+            ))}
+        </div>
+      </div>
+
+      <div className="relative mt-5 grid grid-cols-3 gap-2">
+        <MacroBar
+          label={t('stats.protein')}
+          current={protein}
+          max={proteinMax}
+          color="var(--color-macro-protein)"
+        />
+        <MacroBar
+          label={t('stats.carbs')}
+          current={carbs}
+          max={carbsMax}
+          color="var(--color-macro-carbs)"
+        />
+        <MacroBar
+          label={t('stats.fat')}
+          current={fat}
+          max={fatMax}
+          color="var(--color-macro-fat)"
+        />
       </div>
     </div>
   );

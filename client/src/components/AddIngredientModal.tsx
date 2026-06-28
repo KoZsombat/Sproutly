@@ -262,7 +262,7 @@ export default function AddIngredientModal({
 
   if (!visible) return null;
   return (
-    <div className="fixed pt-5 inset-0 bg-white z-20 overflow-hidden flex flex-col">
+    <div className="modal-panel fixed pt-5 inset-0 z-20 overflow-hidden flex flex-col">
       {isBarcode && (
         <BarcodeNumberScanner
           onDetected={(barcode) => {
@@ -273,16 +273,16 @@ export default function AddIngredientModal({
           onClose={() => setIsBarcode(false)}
         />
       )}
-      <div className="flex flex-row justify-between items-center px-3 sm:px-6 py-2 sm:py-4 border-b border-gray-200 bg-white flex-shrink-0">
-        <p className="text-3xl sm:text-4xl font-bold text-gray-900">
+      <div className="flex flex-row justify-between items-center px-3 sm:px-6 py-2 sm:py-4 border-b border-line bg-paper flex-shrink-0">
+        <p className="text-3xl sm:text-4xl font-bold font-display text-ink">
           {editMode ? t('ingredient.editTitle') : t('ingredient.addTitle')}
         </p>
         <button
-          className="hover:bg-gray-100 rounded-lg p-2 transition-colors cursor-pointer"
+          className="hover:bg-leaf-50 text-ink rounded-full p-2 transition-colors cursor-pointer"
           onClick={onClose}
           aria-label={t('common.close')}
         >
-          <IoCloseOutline size={28} color="#000" />
+          <IoCloseOutline size={28} />
         </button>
       </div>
       <div className="overflow-y-auto pb-[10vh] flex-1 p-3 sm:p-6 max-w-2xl mx-auto w-full">
@@ -291,8 +291,8 @@ export default function AddIngredientModal({
             onClick={() => setViewMode('create')}
             className={`px-3 sm:px-5 py-1 sm:py-2 font-medium text-xs sm:text-sm transition-colors border-b-2 rounded-t-lg focus:outline-none ${
               viewMode === 'create'
-                ? 'text-gray-900 border-gray-900 bg-gray-100'
-                : 'text-gray-500 border-transparent hover:text-gray-700 bg-transparent'
+                ? 'text-leaf-700 border-leaf-500 bg-leaf-50'
+                : 'text-muted border-transparent hover:text-ink-2 bg-transparent'
             }`}
           >
             {t('ingredient.createOwn')}
@@ -301,8 +301,8 @@ export default function AddIngredientModal({
             onClick={() => setViewMode('database')}
             className={`px-3 sm:px-5 py-1 sm:py-2 font-medium text-xs sm:text-sm transition-colors border-b-2 rounded-t-lg focus:outline-none ${
               viewMode === 'database'
-                ? 'text-gray-900 border-gray-900 bg-gray-100'
-                : 'text-gray-500 border-transparent hover:text-gray-700 bg-transparent'
+                ? 'text-leaf-700 border-leaf-500 bg-leaf-50'
+                : 'text-muted border-transparent hover:text-ink-2 bg-transparent'
             }`}
           >
             {t('ingredient.selectFromDatabase')}
@@ -316,7 +316,7 @@ export default function AddIngredientModal({
             {viewMode === 'database' && (
               <>
                 <label
-                  className="block w-full text-sm md:text-xs font-medium text-gray-900 mb-1"
+                  className="block w-full text-sm md:text-xs font-medium text-ink-2 mb-1"
                   htmlFor="ingredient-search"
                 >
                   {t('ingredient.searchLabel')}
@@ -324,7 +324,7 @@ export default function AddIngredientModal({
                 <div className="flex w-full gap-2 items-center mb-2">
                   <input
                     id="ingredient-search"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm md:text-xs rounded-lg block w-full p-1.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="field block text-sm md:text-xs md:p-1.5"
                     type="text"
                     placeholder={t('ingredient.searchPlaceholder')}
                     value={searchTerm}
@@ -341,7 +341,7 @@ export default function AddIngredientModal({
                   />
                 </div>
                 <label
-                  className="block w-full text-sm md:text-xs font-medium text-gray-900 mb-1"
+                  className="block w-full text-sm md:text-xs font-medium text-ink-2 mb-1"
                   htmlFor="ingredient-select"
                 >
                   {t('ingredient.selectLabel')}
@@ -385,32 +385,32 @@ export default function AddIngredientModal({
                   value={selectedOption}
                   isClearable={true}
                   styles={{
-                    control: (base) => ({
+                    control: (base, state) => ({
                       ...base,
-                      borderRadius: '0.5rem',
+                      borderRadius: '16px',
                       minHeight: '32px',
-                      borderColor: '#d1d5db',
-                      boxShadow: 'none',
+                      borderColor: state.isFocused ? '#76d39d' : '#e3ebe5',
+                      boxShadow: state.isFocused ? '0 0 0 3px #76d39d' : 'none',
                       fontSize: '0.85rem',
                       padding: '0 2px',
+                      '&:hover': { borderColor: '#76d39d' },
                     }),
                     menu: (base) => ({
                       ...base,
-                      borderRadius: '0.5rem',
+                      borderRadius: '16px',
+                      overflow: 'hidden',
                       zIndex: 50,
                     }),
                     option: (base, state) => ({
                       ...base,
-                      backgroundColor: state.isFocused ? '#e0e7ff' : 'white',
-                      color: '#111827',
+                      backgroundColor: state.isFocused ? '#ecfaf0' : 'white',
+                      color: '#0e1f17',
                       fontSize: '0.85rem',
                       padding: '8px 10px',
                     }),
                   }}
                 />
-                <p className="text-right text-sm text-gray-600">
-                  {t('ingredient.dataAttribution')}
-                </p>
+                <p className="text-right text-sm text-muted">{t('ingredient.dataAttribution')}</p>
               </>
             )}
           </div>
@@ -420,14 +420,14 @@ export default function AddIngredientModal({
             {isMobile() && viewMode === 'create' ? (
               <div className="flex justify-center gap-2 mb-2">
                 <button
-                  className="flex flex-col items-center justify-center px-2 py-2 rounded-lg shadow bg-gradient-to-br from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 transition-all border border-gray-300 focus:outline-none group"
+                  className="flex flex-col items-center justify-center px-2 py-2 rounded-xl shadow-soft bg-leaf-50 hover:bg-leaf-100 transition-all border border-leaf-100 focus:outline-none group"
                   style={{ minWidth: 80 }}
                   onClick={() => setIsBarcode(true)}
                 >
-                  <span className="mb-0.5 flex items-center justify-center w-7 h-7 rounded-full bg-gray-200 group-hover:bg-gray-300 transition-all">
-                    <HiCamera size={18} color="#111" />
+                  <span className="mb-0.5 flex items-center justify-center w-7 h-7 rounded-full bg-leaf-100 text-leaf-700 group-hover:bg-leaf-200 transition-all">
+                    <HiCamera size={18} />
                   </span>
-                  <span className="text-[10px] font-semibold text-gray-900">
+                  <span className="text-[10px] font-semibold text-leaf-700">
                     {t('ingredient.scanBarcode')}
                   </span>
                 </button>
@@ -446,12 +446,10 @@ export default function AddIngredientModal({
               </div>
             ) : null}
             <div>
-              <p className={`block mb-2 text-sm font-medium text-gray-900`}>
-                {t('ingredient.name')}
-              </p>
+              <p className={`block mb-2 text-sm font-medium text-ink-2`}>{t('ingredient.name')}</p>
               <input
                 className={
-                  `bg-gray-50 border border-gray-300 text-gray-900 rounded-lg block w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent ` +
+                  `field block ` +
                   (viewMode === 'database' ? 'md:text-xs md:p-1.5 text-sm p-2.5' : 'text-sm p-2.5')
                 }
                 value={localName}
@@ -459,12 +457,12 @@ export default function AddIngredientModal({
               />
             </div>
             <div>
-              <p className={`block mb-2 text-sm font-medium text-gray-900`}>
+              <p className={`block mb-2 text-sm font-medium text-ink-2`}>
                 {t('ingredient.calories')}
               </p>
               <input
                 className={
-                  `bg-gray-50 border border-gray-300 text-gray-900 rounded-lg block w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent ` +
+                  `field block ` +
                   (viewMode === 'database' ? 'md:text-xs md:p-1.5 text-sm p-2.5' : 'text-sm p-2.5')
                 }
                 value={localCalories}
@@ -472,12 +470,12 @@ export default function AddIngredientModal({
               />
             </div>
             <div>
-              <p className={`block mb-2 text-sm font-medium text-gray-900`}>
+              <p className={`block mb-2 text-sm font-medium text-ink-2`}>
                 {t('ingredient.protein')}
               </p>
               <input
                 className={
-                  `bg-gray-50 border border-gray-300 text-gray-900 rounded-lg block w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent ` +
+                  `field block ` +
                   (viewMode === 'database' ? 'md:text-xs md:p-1.5 text-sm p-2.5' : 'text-sm p-2.5')
                 }
                 value={localProtein}
@@ -485,12 +483,10 @@ export default function AddIngredientModal({
               />
             </div>
             <div>
-              <p className={`block mb-2 text-sm font-medium text-gray-900`}>
-                {t('ingredient.carbs')}
-              </p>
+              <p className={`block mb-2 text-sm font-medium text-ink-2`}>{t('ingredient.carbs')}</p>
               <input
                 className={
-                  `bg-gray-50 border border-gray-300 text-gray-900 rounded-lg block w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent ` +
+                  `field block ` +
                   (viewMode === 'database' ? 'md:text-xs md:p-1.5 text-sm p-2.5' : 'text-sm p-2.5')
                 }
                 value={localCarbs}
@@ -498,12 +494,10 @@ export default function AddIngredientModal({
               />
             </div>
             <div>
-              <p className={`block mb-2 text-sm font-medium text-gray-900`}>
-                {t('ingredient.fat')}
-              </p>
+              <p className={`block mb-2 text-sm font-medium text-ink-2`}>{t('ingredient.fat')}</p>
               <input
                 className={
-                  `bg-gray-50 border border-gray-300 text-gray-900 rounded-lg block w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent ` +
+                  `field block ` +
                   (viewMode === 'database' ? 'md:text-xs md:p-1.5 text-sm p-2.5' : 'text-sm p-2.5')
                 }
                 value={localFat}
@@ -512,9 +506,9 @@ export default function AddIngredientModal({
             </div>
           </div>
         </div>
-        <div className="mt-6 rounded-xl border border-gray-200 bg-linear-to-b from-gray-50 to-white p-4 sm:p-5">
+        <div className="mt-6 rounded-2xl border border-line bg-cream p-4 sm:p-5">
           <div className="flex items-center justify-between gap-4">
-            <label htmlFor="displayAsMeal" className="text-sm font-medium text-gray-800">
+            <label htmlFor="displayAsMeal" className="text-sm font-medium text-ink-2">
               {t('ingredient.displayAsMeal')}
             </label>
             <button
@@ -523,8 +517,8 @@ export default function AddIngredientModal({
               role="switch"
               aria-checked={displayAsMeal}
               onClick={() => setDisplayAsMeal((v) => !v)}
-              className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
-                displayAsMeal ? 'bg-blue-600' : 'bg-gray-300'
+              className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none ${
+                displayAsMeal ? 'bg-leaf-500' : 'bg-line'
               }`}
             >
               <span
@@ -536,7 +530,7 @@ export default function AddIngredientModal({
           </div>
           {displayAsMeal && (
             <div className="mt-4 flex items-center gap-3">
-              <label htmlFor="mealGrams" className="text-sm font-medium text-gray-700">
+              <label htmlFor="mealGrams" className="text-sm font-medium text-ink-2">
                 {t('ingredient.mealGrams')}
               </label>
               <div className="relative w-28">
@@ -545,11 +539,11 @@ export default function AddIngredientModal({
                   type="number"
                   inputMode="numeric"
                   min="1"
-                  className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-3 pr-9 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                  className="field bg-white py-2 pl-3 pr-9 text-sm"
                   value={mealGrams}
                   onChange={(e) => setMealGrams(e.target.value.replace(/[^0-9]/g, ''))}
                 />
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-gray-500">
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-muted">
                   g
                 </span>
               </div>
@@ -559,10 +553,10 @@ export default function AddIngredientModal({
         <div className={`mt-4 sm:mt-8 flex gap-2 sm:gap-3 flex-col sm:flex-row justify-center`}>
           <button
             className={
-              `flex-1 rounded-lg font-medium transition-all active:scale-95 cursor-pointer ` +
+              `flex-1 rounded-full font-semibold transition-all active:scale-95 cursor-pointer bg-leaf-500 text-white hover:bg-leaf-600 ` +
               (viewMode === 'database'
-                ? 'px-2 py-2 text-base md:text-xs md:min-w-[80px] md:max-w-[120px] bg-[#5a5a5cff] text-white hover:bg-[#6a6a6cff]'
-                : 'px-4 py-3 text-base bg-[#5a5a5cff] text-white hover:bg-[#6a6a6cff]')
+                ? 'px-2 py-2 text-base md:text-xs md:min-w-[80px] md:max-w-[120px]'
+                : 'px-4 py-3 text-base')
             }
             onClick={() => {
               const err = validateIngredient();
@@ -589,10 +583,10 @@ export default function AddIngredientModal({
           </button>
           <button
             className={
-              `flex-1 rounded-lg font-medium transition-all cursor-pointer ` +
+              `flex-1 rounded-full font-semibold transition-all cursor-pointer border border-line text-ink-2 bg-white hover:bg-leaf-50 ` +
               (viewMode === 'database'
-                ? 'px-2 py-2 text-base md:text-xs md:min-w-[80px] md:max-w-[120px] border border-gray-300 text-gray-700 bg-gray-200 hover:bg-gray-50'
-                : 'px-4 py-3 text-base border border-gray-300 text-gray-700 bg-gray-200 hover:bg-gray-50')
+                ? 'px-2 py-2 text-base md:text-xs md:min-w-[80px] md:max-w-[120px]'
+                : 'px-4 py-3 text-base')
             }
             onClick={onClose}
           >

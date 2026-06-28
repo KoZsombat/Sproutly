@@ -14,29 +14,25 @@ export default function Navbar({
 }) {
   const { t } = useTranslation();
 
+  const itemClass =
+    'flex flex-1 max-w-[120px] flex-col items-center justify-center gap-1 min-h-[44px] py-1 text-muted hover:text-leaf-600 transition-colors cursor-pointer';
+
   return (
-    <div className="fixed bottom-0 left-0 w-full bg-white z-30 flex items-center justify-center gap-3 sm:gap-4 p-2 sm:p-2 shadow-[0_-2px_8px_0_rgba(0,0,0,0.08)]">
-      <button
-        className="flex flex-col items-center w-24 sm:w-24 hover:opacity-70 transition-opacity cursor-pointer"
-        onClick={onHistory}
-      >
-        <FaHistory size={24} color="black" />
-        <p className="text-sm sm:text-sm">{t('navbar.history')}</p>
-      </button>
-      <button
-        className="flex flex-col items-center w-24 sm:w-24 hover:opacity-70 transition-opacity cursor-pointer"
-        onClick={onHome}
-      >
-        <FaHome size={24} color="black" />
-        <p className="text-sm sm:text-sm">{t('navbar.home')}</p>
-      </button>
-      <button
-        className="flex flex-col items-center w-24 sm:w-24 hover:opacity-70 transition-opacity cursor-pointer"
-        onClick={onOpenManage}
-      >
-        <BiSolidFoodMenu size={24} color="black" />
-        <p className="text-sm sm:text-sm">{t('navbar.manage')}</p>
-      </button>
+    <div className="fixed bottom-0 left-0 w-full z-30 bg-paper/85 backdrop-blur border-t border-line shadow-float rounded-t-3xl pb-[env(safe-area-inset-bottom)]">
+      <div className="flex items-center justify-around gap-2 px-3 py-2 max-w-md mx-auto">
+        <button className={itemClass} onClick={onHistory}>
+          <FaHistory size={22} />
+          <span className="text-xs font-medium">{t('navbar.history')}</span>
+        </button>
+        <button className={itemClass} onClick={onHome}>
+          <FaHome size={22} />
+          <span className="text-xs font-medium">{t('navbar.home')}</span>
+        </button>
+        <button className={itemClass} onClick={onOpenManage}>
+          <BiSolidFoodMenu size={22} />
+          <span className="text-xs font-medium">{t('navbar.manage')}</span>
+        </button>
+      </div>
     </div>
   );
 }

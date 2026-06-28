@@ -106,15 +106,17 @@ export default function SettingsModal({
   if (!visible) return null;
 
   return (
-    <div className="overflow-y-auto pb-[10vh] fixed pt-5 inset-0 bg-white z-20 overflow-hidden flex flex-col">
-      <div className="flex flex-row justify-between items-center px-3 sm:px-6 py-2 sm:py-4 border-b border-gray-200 bg-white flex-shrink-0">
-        <p className="text-3xl sm:text-4xl font-bold text-gray-900">{t('settings.title')}</p>
+    <div className="modal-panel overflow-y-auto pb-[10vh] fixed pt-5 inset-0 z-20 overflow-hidden flex flex-col">
+      <div className="flex flex-row justify-between items-center px-3 sm:px-6 py-2 sm:py-4 border-b border-line bg-paper flex-shrink-0">
+        <p className="text-3xl sm:text-4xl font-bold font-display text-ink">
+          {t('settings.title')}
+        </p>
         <button
-          className="hover:bg-gray-100 rounded-lg p-2 transition-colors cursor-pointer"
+          className="hover:bg-leaf-50 text-ink rounded-full p-2 transition-colors cursor-pointer"
           onClick={onClose}
           aria-label={t('common.close')}
         >
-          <IoCloseOutline size={28} color="#000" />
+          <IoCloseOutline size={28} />
         </button>
       </div>
       <div className="overflow-y-auto flex-1 p-3 sm:p-6 max-w-2xl mx-auto w-full">
@@ -122,28 +124,28 @@ export default function SettingsModal({
           <Alert message={alertMsg} type={alertType} onClose={() => setAlertMsg(null)} />
         )}
         <div className="mb-4 sm:mb-8">
-          <div className="bg-blue-100 w-full rounded-md border border-blue-300 px-3 py-2 mb-5">
-            <h2 className="text-lg font-semibold text-blue-800 mb-1">
+          <div className="bg-leaf-50 w-full rounded-xl border border-leaf-100 px-3 py-2 mb-5">
+            <h2 className="text-lg font-semibold text-leaf-800 mb-1">
               {t('settings.downloadTitle')}
             </h2>
-            <p className="text-sm text-blue-700">{t('settings.downloadText')}</p>
+            <p className="text-sm text-leaf-700">{t('settings.downloadText')}</p>
           </div>
-          <h2 className="text-base text-2xl font-semibold text-gray-900 mb-2 sm:mb-4">
+          <h2 className="text-2xl font-semibold text-ink mb-2 sm:mb-4">
             {t('settings.personalInfo')}
           </h2>
           <div className="pl-4 sm:pl-8">
-            <label className="block mb-2 text-sm font-medium text-gray-900">
+            <label className="block mb-2 text-sm font-medium text-ink-2">
               {t('settings.email')}
             </label>
             <input
               type="email-address"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-xs sm:text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent block w-full p-2 sm:p-2.5"
+              className="field text-xs sm:text-sm p-2 sm:p-2.5"
               value={localEmail}
               onChange={(e) => setLocalEmail(e.target.value)}
             />
           </div>
           <div className="pl-4 sm:pl-8 mt-4">
-            <label className="block mb-2 text-sm font-medium text-gray-900">
+            <label className="block mb-2 text-sm font-medium text-ink-2">
               {t('settings.nationality')}
             </label>
             <div className="flex flex-row gap-2 items-center w-full">
@@ -166,24 +168,26 @@ export default function SettingsModal({
                     MenuList: (props) => <>{props.children}</>,
                   }}
                   styles={{
-                    control: (base) => ({
+                    control: (base, state) => ({
                       ...base,
-                      borderRadius: '0.5rem',
+                      borderRadius: '16px',
                       minHeight: '32px',
-                      borderColor: '#d1d5db',
-                      boxShadow: 'none',
+                      borderColor: state.isFocused ? '#76d39d' : '#e3ebe5',
+                      boxShadow: state.isFocused ? '0 0 0 3px #76d39d' : 'none',
                       fontSize: '0.95rem',
                       padding: '0 2px',
+                      '&:hover': { borderColor: '#76d39d' },
                     }),
                     menu: (base) => ({
                       ...base,
-                      borderRadius: '0.5rem',
+                      borderRadius: '16px',
+                      overflow: 'hidden',
                       zIndex: 50,
                     }),
                     option: (base, state) => ({
                       ...base,
-                      backgroundColor: state.isFocused ? '#e0e7ff' : 'white',
-                      color: '#111827',
+                      backgroundColor: state.isFocused ? '#ecfaf0' : 'white',
+                      color: '#0e1f17',
                       fontSize: '0.95rem',
                       padding: '8px 10px',
                     }),
@@ -194,77 +198,77 @@ export default function SettingsModal({
           </div>
         </div>
         <div className="mb-4 sm:mb-8">
-          <h2 className="text-base text-2xl font-semibold text-gray-900 mb-2 sm:mb-4">
+          <h2 className="text-2xl font-semibold text-ink mb-2 sm:mb-4">
             {t('settings.dailyMacros')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-6 pl-4 sm:pl-8">
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-900">
+              <label className="block mb-2 text-sm font-medium text-ink-2">
                 {t('settings.calorieGoal')}
               </label>
               <input
                 type="decimal-pad"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-xs sm:text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent block w-full p-2 sm:p-2.5"
+                className="field text-xs sm:text-sm p-2 sm:p-2.5"
                 value={localCalorieMax}
                 onChange={(e) => setLocalCalorieMax(e.target.value.replace(/[^0-9]/g, ''))}
               />
             </div>
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-900">
+              <label className="block mb-2 text-sm font-medium text-ink-2">
                 {t('settings.proteinGoal')}
               </label>
               <input
                 type="decimal-pad"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-xs sm:text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent block w-full p-2 sm:p-2.5"
+                className="field text-xs sm:text-sm p-2 sm:p-2.5"
                 value={localProteinMax}
                 onChange={(e) => setLocalProteinMax(e.target.value.replace(/[^0-9]/g, ''))}
               />
             </div>
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-900">
+              <label className="block mb-2 text-sm font-medium text-ink-2">
                 {t('settings.carbsGoal')}
               </label>
               <input
                 type="decimal-pad"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-xs sm:text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent block w-full p-2 sm:p-2.5"
+                className="field text-xs sm:text-sm p-2 sm:p-2.5"
                 value={localCarbsMax}
                 onChange={(e) => setLocalCarbsMax(e.target.value.replace(/[^0-9]/g, ''))}
               />
             </div>
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-900">
+              <label className="block mb-2 text-sm font-medium text-ink-2">
                 {t('settings.fatGoal')}
               </label>
               <input
                 type="decimal-pad"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-xs sm:text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent block w-full p-2 sm:p-2.5"
+                className="field text-xs sm:text-sm p-2 sm:p-2.5"
                 value={localFatMax}
                 onChange={(e) => setLocalFatMax(e.target.value.replace(/[^0-9]/g, ''))}
               />
             </div>
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-900">
+              <label className="block mb-2 text-sm font-medium text-ink-2">
                 {t('settings.waterGoal')}
               </label>
               <input
                 type="text"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-xs sm:text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent block w-full p-2 sm:p-2.5"
+                className="field text-xs sm:text-sm p-2 sm:p-2.5"
                 value={localWaterGoal}
                 onChange={(e) => setLocalWaterGoal(e.target.value.replace(/[^0-9.,]/g, ''))}
               />
             </div>
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-900">
+              <label className="block mb-2 text-sm font-medium text-ink-2">
                 {t('settings.trackCreatine')}
               </label>
               <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => setLocalCreatineEnabled(true)}
-                  className={`px-3 py-2 rounded-lg border text-sm cursor-pointer transition-colors ${
+                  className={`px-4 py-2 rounded-full border text-sm font-semibold cursor-pointer transition-colors ${
                     localCreatineEnabled
-                      ? 'bg-[#3a3a3cff] text-white border-[#3a3a3cff]'
-                      : 'bg-white text-gray-700 border-gray-300'
+                      ? 'bg-leaf-500 text-white border-leaf-500'
+                      : 'bg-white text-ink-2 border-line'
                   }`}
                 >
                   {t('common.yes')}
@@ -272,10 +276,10 @@ export default function SettingsModal({
                 <button
                   type="button"
                   onClick={() => setLocalCreatineEnabled(false)}
-                  className={`px-3 py-2 rounded-lg border text-sm cursor-pointer transition-colors ${
+                  className={`px-4 py-2 rounded-full border text-sm font-semibold cursor-pointer transition-colors ${
                     !localCreatineEnabled
-                      ? 'bg-[#3a3a3cff] text-white border-[#3a3a3cff]'
-                      : 'bg-white text-gray-700 border-gray-300'
+                      ? 'bg-leaf-500 text-white border-leaf-500'
+                      : 'bg-white text-ink-2 border-line'
                   }`}
                 >
                   {t('common.no')}
@@ -286,7 +290,7 @@ export default function SettingsModal({
         </div>
         <div className="flex gap-2 sm:gap-3">
           <button
-            className="flex-1 px-3 sm:px-4 py-2 sm:py-3 rounded-lg bg-[#3a3a3cff] text-white font-medium text-sm sm:text-base hover:bg-[#4a4a4cff] transition-all active:scale-95 cursor-pointer"
+            className="flex-1 px-4 py-3 rounded-full bg-leaf-500 text-white font-semibold text-sm sm:text-base hover:bg-leaf-600 transition-all active:scale-95 cursor-pointer"
             onClick={async () => {
               const err = validateSettings();
               if (err) {
@@ -313,7 +317,7 @@ export default function SettingsModal({
             {t('settings.update')}
           </button>
           <button
-            className="flex-1 px-4 py-3 rounded-lg border border-gray-300 text-gray-700 font-medium bg-gray-200 hover:bg-gray-50 transition-all cursor-pointer"
+            className="flex-1 px-4 py-3 rounded-full border border-line text-ink-2 font-semibold bg-white hover:bg-leaf-50 transition-all cursor-pointer"
             onClick={onClose}
           >
             {t('common.cancel')}

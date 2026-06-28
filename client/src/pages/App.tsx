@@ -860,7 +860,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         onUpdate={Update}
       />
       <div className="w-full lg:w-[80%]">
-        <Header onOpenSettings={toggleTab('settingsTab')} onLogout={onLogout} />
+        <Header username={username} onOpenSettings={toggleTab('settingsTab')} onLogout={onLogout} />
         <StatsDisplay
           calories={calories}
           protein={protein}
@@ -870,6 +870,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
           proteinMax={proteinMax}
           carbsMax={carbsMax}
           fatMax={fatMax}
+          mealsEaten={Eaten.length}
         />
         <TodaysCuisine
           eaten={Eaten}
@@ -880,7 +881,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
           onDeleteEaten={handleDeleteEaten}
         />
         <div
-          className={`grid grid-cols-1 ${creatineEnabled ? 'md:grid-cols-2' : 'md:grid-cols-1'} gap-3 mx-3 my-2 sm:mx-5 sm:my-5`}
+          className={`grid grid-cols-1 ${creatineEnabled ? 'md:grid-cols-2' : 'md:grid-cols-1'} gap-3 mx-4 my-3 sm:mx-6`}
         >
           <WaterIntake
             water={waterIntake}

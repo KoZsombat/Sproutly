@@ -132,27 +132,27 @@ export default function History({
   const hasOutOfStreakEntries = groupedEatenData.length > currentStreakDateKeys.length;
 
   return (
-    <div className="overflow-y-auto pb-[10vh] fixed pt-5 inset-0 bg-white z-20 overflow-hidden flex flex-col">
-      <div className="flex flex-row justify-between items-center px-3 sm:px-6 py-2 sm:py-4 border-b border-gray-200 bg-white flex-shrink-0">
-        <p className="text-3xl sm:text-4xl font-bold text-gray-900">{t('history.title')}</p>
+    <div className="modal-panel overflow-y-auto pb-[10vh] fixed pt-5 inset-0 z-20 overflow-hidden flex flex-col">
+      <div className="flex flex-row justify-between items-center px-3 sm:px-6 py-2 sm:py-4 border-b border-line bg-paper flex-shrink-0">
+        <p className="text-3xl sm:text-4xl font-bold font-display text-ink">{t('history.title')}</p>
         <button
-          className="hover:bg-gray-100 rounded-lg p-2 transition-colors cursor-pointer"
+          className="hover:bg-leaf-50 text-ink rounded-full p-2 transition-colors cursor-pointer"
           onClick={onClose}
           aria-label={t('common.close')}
         >
-          <IoCloseOutline size={28} color="#000" />
+          <IoCloseOutline size={28} />
         </button>
       </div>
       <div className="overflow-y-auto flex-1 p-4 sm:p-8 max-w-4xl mx-auto w-full">
         <div className="mb-4">
-          <div className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-2xl shadow flex justify-center items-center p-8 sm:p-12">
+          <div className="bg-leaf-50 border border-leaf-100 rounded-2xl shadow-card flex justify-center items-center p-8 sm:p-12">
             <div className="flex flex-col items-center justify-center">
               <StreakDisplay streak={streak} />
             </div>
           </div>
           <div className="mt-4 flex justify-end">
             <button
-              className="rounded-lg border border-red-600 bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 hover:border-red-700 active:bg-red-800 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-200 disabled:border-gray-300 disabled:text-gray-500 disabled:shadow-none"
+              className="rounded-full bg-berry px-5 py-2 text-sm font-semibold text-white shadow-card hover:opacity-90 transition-opacity cursor-pointer disabled:cursor-not-allowed disabled:bg-cream disabled:text-muted disabled:shadow-none"
               onClick={() => onClearHistory(currentStreakDateKeys)}
               disabled={!hasOutOfStreakEntries}
             >
@@ -162,36 +162,36 @@ export default function History({
         </div>
         {groupedEatenData.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16">
-            <p className="text-lg text-gray-400 font-semibold">{t('history.noHistory')}</p>
+            <p className="text-lg text-muted font-semibold">{t('history.noHistory')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {groupedEatenData.map((entry, index) => (
               <div
                 key={index}
-                className="bg-white rounded-xl shadow border border-gray-200 p-5 sm:p-7 flex flex-col gap-2"
+                className="bg-white rounded-2xl shadow-card border border-line p-5 sm:p-7 flex flex-col gap-2"
               >
                 <div className="flex flex-row items-center gap-2 mb-2">
-                  <span className="text-base font-bold text-gray-800 bg-gray-100 px-3 py-1 rounded-full uppercase tracking-wide shadow-sm">
+                  <span className="num text-sm font-bold text-leaf-700 bg-leaf-50 border border-leaf-100 px-3 py-1 rounded-full uppercase tracking-wide">
                     {formatLocalDate(entry.date)}
                   </span>
                 </div>
-                <div className="grid grid-cols-2 gap-3 text-base text-gray-900 font-medium">
-                  <div className="rounded-lg bg-gray-100 px-3 py-2 flex flex-col items-center">
-                    <span className="text-xs text-gray-500">{t('stats.calories')}</span>
-                    <span className="font-extrabold text-gray-900 text-lg">{entry.calories}</span>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-xl bg-cream px-3 py-2 flex flex-col items-center">
+                    <span className="text-xs text-muted">{t('stats.calories')}</span>
+                    <span className="num font-bold text-ink text-lg">{entry.calories}</span>
                   </div>
-                  <div className="rounded-lg bg-gray-100 px-3 py-2 flex flex-col items-center">
-                    <span className="text-xs text-gray-500">{t('stats.protein')}</span>
-                    <span className="font-extrabold text-gray-900 text-lg">{entry.protein}g</span>
+                  <div className="rounded-xl bg-cream px-3 py-2 flex flex-col items-center">
+                    <span className="text-xs text-muted">{t('stats.protein')}</span>
+                    <span className="num font-bold text-ink text-lg">{entry.protein}g</span>
                   </div>
-                  <div className="rounded-lg bg-gray-100 px-3 py-2 flex flex-col items-center">
-                    <span className="text-xs text-gray-500">{t('stats.carbs')}</span>
-                    <span className="font-extrabold text-gray-900 text-lg">{entry.carbs}g</span>
+                  <div className="rounded-xl bg-cream px-3 py-2 flex flex-col items-center">
+                    <span className="text-xs text-muted">{t('stats.carbs')}</span>
+                    <span className="num font-bold text-ink text-lg">{entry.carbs}g</span>
                   </div>
-                  <div className="rounded-lg bg-gray-100 px-3 py-2 flex flex-col items-center">
-                    <span className="text-xs text-gray-500">{t('stats.fat')}</span>
-                    <span className="font-extrabold text-gray-900 text-lg">{entry.fat}g</span>
+                  <div className="rounded-xl bg-cream px-3 py-2 flex flex-col items-center">
+                    <span className="text-xs text-muted">{t('stats.fat')}</span>
+                    <span className="num font-bold text-ink text-lg">{entry.fat}g</span>
                   </div>
                 </div>
               </div>

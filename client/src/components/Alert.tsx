@@ -27,24 +27,24 @@ export default function Alert({
   const colorStyles =
     type === 'success'
       ? {
-          bg: 'bg-green-100',
-          border: 'border-green-400',
-          text: 'text-green-800',
-          title: 'text-green-700',
+          bg: 'bg-leaf-50',
+          border: 'border-leaf-200',
+          text: 'text-ink-2',
+          title: 'text-leaf-700',
           label: t('common.success'),
         }
       : {
-          bg: 'bg-red-100',
-          border: 'border-red-400',
-          text: 'text-red-800',
-          title: 'text-red-700',
+          bg: 'bg-berry/10',
+          border: 'border-berry/40',
+          text: 'text-ink-2',
+          title: 'text-berry',
           label: t('common.error'),
         };
 
   return (
     <div className="flex justify-center items-start w-full fixed top-4 right-0 z-50 px-4">
       <div
-        className={`${colorStyles.bg} ${colorStyles.border} ${colorStyles.text} px-6 py-4 rounded-lg shadow-md max-w-lg w-full ${animation}`}
+        className={`${colorStyles.bg} ${colorStyles.border} ${colorStyles.text} border px-6 py-4 rounded-xl shadow-card max-w-lg w-full ${animation}`}
         role="alert"
       >
         <p className={`font-bold ${colorStyles.title} mb-1`}>{colorStyles.label}</p>

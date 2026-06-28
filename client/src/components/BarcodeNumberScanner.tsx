@@ -152,11 +152,15 @@ export default function BarcodeNumberScanner({ onDetected, onClose }: BarcodeNum
   }, [cleanup, clearInitTimeout, handleDetected, requestCameraPermission, safeClose]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="relative w-full max-w-md h-3/4 bg-black rounded-lg shadow-lg overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 backdrop-blur-sm p-4">
+      <div className="relative w-full max-w-md h-3/4 bg-ink rounded-2xl shadow-float overflow-hidden">
+        <span className="absolute left-3 top-3 z-10 num inline-flex items-center gap-2 rounded-full bg-ink/70 px-3 py-1 text-xs uppercase tracking-widest text-leaf-300">
+          <span className="h-2 w-2 rounded-full bg-leaf-300 animate-pulse" />
+          {t('common.scanning')}
+        </span>
         <button
           type="button"
-          className="absolute right-3 top-3 z-10 rounded bg-white/90 px-3 py-1 text-sm font-medium text-black hover:bg-white"
+          className="absolute right-3 top-3 z-10 rounded-full bg-leaf-500 px-4 py-1.5 text-sm font-semibold text-white hover:bg-leaf-600 transition-colors"
           onClick={safeClose}
           aria-label={t('common.closeScanner')}
         >

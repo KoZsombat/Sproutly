@@ -179,27 +179,51 @@ export default function Index() {
   return (
     <>
       {logged ? (
-        <div className="w-full min-h-screen bg-gray-200 flex justify-center">
+        <div className="w-full min-h-screen bg-paper flex justify-center">
           <div className="2xl:w-[65vw] w-full h-full">
             <MainApp onLogout={handleLogout} />
           </div>
         </div>
       ) : (
-        <div className="flex w-full h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
+        <div className="relative flex w-full min-h-screen items-center justify-center bg-paper overflow-hidden px-4">
+          <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-leaf-100 blur-3xl opacity-70" />
+          <div className="pointer-events-none absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-sun/50 blur-3xl opacity-70" />
+
           {alertMsg && (
             <Alert message={alertMsg} type={alertType} onClose={() => setAlertMsg(null)} />
           )}
-          <div className="flex items-center text-center justify-center w-full h-full px-3">
-            <div className="w-full max-w-md bg-white rounded-2xl shadow-xl items-center justify-center py-3 px-4 sm:py-6 sm:px-6">
-              <div className="flex flex-wrap justify-center gap-1.5 mb-4 sm:mb-6">
+          <div className="relative w-full max-w-md">
+            <div className="flex flex-col items-center text-center mb-6">
+              <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-leaf-500 shadow-card">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="32"
+                  height="32"
+                  fill="none"
+                  stroke="#ffffff"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19.8 2c1 5 .9 9-1.5 12-1.7 2.2-4.5 5-7.3 6Z" />
+                  <path d="M2 22 17 7" />
+                </svg>
+              </div>
+              <h1 className="mt-4 text-4xl font-bold font-display text-ink">Sproutly</h1>
+              <p className="mt-1 text-sm text-muted">{t('login.tagline')}</p>
+            </div>
+
+            <div className="w-full bg-white rounded-3xl shadow-float border border-line p-5 sm:p-6">
+              <div className="flex justify-center gap-1.5 mb-5 rounded-full bg-cream p-1">
                 <button
-                  className={`rounded-lg px-3 sm:px-6 py-1.5 sm:py-2 font-medium transition-all cursor-pointer text-sm sm:text-base ${showLogin ? 'bg-[#3a3a3cff] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                  className={`flex-1 rounded-full px-4 py-2 font-semibold transition-all cursor-pointer text-sm ${showLogin ? 'bg-leaf-500 text-white shadow-soft' : 'text-ink-2 hover:text-ink'}`}
                   onClick={() => setShowLogin(true)}
                 >
                   {t('login.loginTab')}
                 </button>
                 <button
-                  className={`rounded-lg px-3 sm:px-6 py-1.5 sm:py-2 font-medium transition-all cursor-pointer text-sm sm:text-base ${!showLogin ? 'bg-[#3a3a3cff] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                  className={`flex-1 rounded-full px-4 py-2 font-semibold transition-all cursor-pointer text-sm ${!showLogin ? 'bg-leaf-500 text-white shadow-soft' : 'text-ink-2 hover:text-ink'}`}
                   onClick={() => setShowLogin(false)}
                 >
                   {t('login.registerTab')}
@@ -207,71 +231,65 @@ export default function Index() {
               </div>
 
               {showLogin ? (
-                <div className="space-y-2 sm:space-y-3">
-                  <p className="text-lg sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-4 text-center">
-                    {t('login.loginTitle')}
-                  </p>
+                <div className="space-y-3">
                   <input
-                    className="bg-gray-50 rounded-lg w-full p-2 sm:p-3 text-sm sm:text-base border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="field"
                     placeholder={t('login.username')}
                     value={loginName}
                     onChange={(e) => setLoginName(e.target.value)}
                     autoCapitalize="none"
                   />
                   <input
-                    className="bg-gray-50 rounded-lg w-full p-2 sm:p-3 text-sm sm:text-base border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="field"
                     placeholder={t('login.password')}
                     type="password"
                     value={loginPass}
                     onChange={(e) => setLoginPass(e.target.value)}
                   />
                   <button
-                    className="bg-[#3a3a3cff] mt-2 sm:mt-4 mb-[-0.5rem] w-full p-2 sm:p-3 rounded-lg text-white font-medium text-sm sm:text-base hover:bg-[#4a4a4cff] transition-all active:scale-95 cursor-pointer"
+                    className="btn-leaf w-full cursor-pointer active:scale-[.99]"
                     onClick={handleLogin}
                   >
                     {t('login.loginButton')}
                   </button>
                   <button
-                    className="bg-red-500 mt-2 sm:mt-4 w-full p-2 sm:p-3 rounded-lg text-white font-medium text-sm sm:text-base hover:bg-red-600 transition-all cursor-pointer"
+                    className="w-full rounded-full border border-line bg-white py-3 font-semibold text-ink-2 hover:bg-leaf-50 transition-colors cursor-pointer"
                     onClick={() => (window.location.href = `/auth/google`)}
                   >
                     {t('login.googleLogin')}
                   </button>
                 </div>
               ) : (
-                <div className="space-y-2 sm:space-y-3">
-                  <p className="text-lg sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-4 text-center">
-                    {t('login.registerTitle')}
-                  </p>
+                <div className="space-y-3">
                   <input
-                    className="bg-gray-50 rounded-lg w-full p-2 sm:p-3 text-sm sm:text-base border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="field"
                     placeholder={t('login.username')}
                     value={registerName}
                     onChange={(e) => setRegisterName(e.target.value)}
                     autoCapitalize="none"
                   />
                   <input
-                    className="bg-gray-50 rounded-lg w-full p-2 sm:p-3 text-sm sm:text-base border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="field"
                     placeholder={t('login.email')}
                     value={registerEmail}
                     onChange={(e) => setRegisterEmail(e.target.value)}
                     autoCapitalize="none"
                   />
                   <input
-                    className="bg-gray-50 rounded-lg w-full p-2 sm:p-3 text-sm sm:text-base border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="field"
                     placeholder={t('login.password')}
                     type="password"
                     value={registerPass}
                     onChange={(e) => setRegisterPass(e.target.value)}
                   />
                   <button
-                    className="bg-[#3a3a3cff] mt-2 sm:mt-4 mb-[-0.5rem] w-full p-2 sm:p-3 rounded-lg text-white font-medium text-sm sm:text-base hover:bg-[#4a4a4cff] transition-all active:scale-95 cursor-pointer"
+                    className="btn-leaf w-full cursor-pointer active:scale-[.99]"
                     onClick={handleRegister}
                   >
                     {t('login.registerButton')}
                   </button>
                   <button
-                    className="bg-red-500 mt-2 sm:mt-4 w-full p-2 sm:p-3 rounded-lg text-white font-medium text-sm sm:text-base hover:bg-red-600 transition-all cursor-pointer"
+                    className="w-full rounded-full border border-line bg-white py-3 font-semibold text-ink-2 hover:bg-leaf-50 transition-colors cursor-pointer"
                     onClick={() => (window.location.href = `/auth/google`)}
                   >
                     {t('login.googleLogin')}

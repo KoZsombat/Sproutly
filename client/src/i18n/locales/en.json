@@ -5,7 +5,12 @@
   "header": {
     "title": "Today",
     "settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "greetMorning": "Morning",
+    "greetAfternoon": "Afternoon",
+    "greetEvening": "Evening",
+    "greeting": "{{greet}}, {{name}} 👋",
+    "greetingNoName": "{{greet}} 👋"
   },
   "settings": {
     "title": "Settings",
@@ -41,7 +46,13 @@
     "calories": "Calories",
     "protein": "Protein",
     "carbs": "Carbs",
-    "fat": "Fat"
+    "fat": "Fat",
+    "today": "Today",
+    "kcal": "kcal",
+    "ofGoal": "of {{goal}} goal",
+    "onTrack": "On track",
+    "overLimit": "Over limit",
+    "mealsCount": "{{count}} meals"
   },
   "todaysCuisine": {
     "title": "Today's Cuisine",
@@ -174,6 +185,7 @@
     "manage": "Manage Meals"
   },
   "login": {
+    "tagline": "Track what fuels you.",
     "loginTab": "Login",
     "registerTab": "Register",
     "loginTitle": "Login",
@@ -204,6 +216,7 @@
     "edit": "Edit",
     "add": "Add",
     "closeScanner": "Close scanner",
+    "scanning": "Scanning",
     "ariaCapsule": "capsule",
     "ariaWaterDrop": "water drop",
     "grams": "grams",

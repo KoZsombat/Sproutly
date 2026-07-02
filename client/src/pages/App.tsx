@@ -3,6 +3,7 @@ import SettingsModal from '../components/SettingsModal';
 import StatsDisplay from '../components/StatsDisplay';
 import TodaysCuisine from '../components/TodaysCuisine';
 import AppendFoodModal from '../components/AppendFoodModal';
+import OneTimeMealModal from '../components/OneTimeMealModal';
 import AddFoodModal from '../components/AddFoodModal';
 import AddIngredientModal from '../components/AddIngredientModal';
 import AddMealModal from '../components/AddMealModal';
@@ -34,6 +35,7 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     addIngredient: false,
     addMeal: false,
     historyTab: false,
+    oneTimeMeal: false,
   });
 
   const toggleTab = (tab: string) => () => {
@@ -656,6 +658,100 @@ export default function App({ onLogout }: { onLogout: () => void }) {
     }
   };
 
+  const AddOneTimeIngredient = async (ingredient: {
+    name: string;
+    calories: string;
+    protein: string;
+    carbs: string;
+    fat: string;
+  }): Promise<boolean> => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/ingredient`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: ingredient.name,
+          calories: parseFloat(ingredient.calories),
+          protein: parseFloat(ingredient.protein),
+          carbs: parseFloat(ingredient.carbs),
+          fat: parseFloat(ingredient.fat),
+          isOneTime: true,
+        }),
+      });
+      if (response.status === 401) {
+        handleUnauthorized();
+        return false;
+      }
+      if (!response.ok) {
+        addToast(t('oneTimeMeal.toastIngredientFailed'), 'error');
+        return false;
+      }
+      addToast(t('oneTimeMeal.toastIngredientCreated'), 'success');
+      await LoadFood();
+      return true;
+    } catch (e) {
+      console.error('Failed to add one-time ingredient', e);
+      addToast(t('oneTimeMeal.toastIngredientFailed'), 'error');
+      return false;
+    }
+  };
+
+  const AddOneTimeMeal = async (
+    name: string,
+    ingredients: { name: string; grams: string }[]
+  ) => {
+    const foodList = ingredients
+      .filter((i) => i.grams !== '' && parseFloat(i.grams) > 0)
+      .map((i) => `${i.name}:${i.grams}`);
+    try {
+      const token = localStorage.getItem('token');
+      const mealResponse = await fetch(`/api/meal`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name, food: foodList, isOneTime: true }),
+      });
+      if (mealResponse.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+      if (!mealResponse.ok) {
+        addToast(t('oneTimeMeal.toastMealFailed'), 'error');
+        return;
+      }
+
+      const eatenResponse = await fetch(`/api/eaten`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ meal: name }),
+      });
+      if (eatenResponse.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+      if (!eatenResponse.ok) {
+        addToast(t('oneTimeMeal.toastMealFailed'), 'error');
+        return;
+      }
+
+      addToast(t('oneTimeMeal.toastMealSuccess'), 'success');
+      await LoadFood();
+      setVisibleTabs((prev) => ({ ...prev, oneTimeMeal: false }));
+    } catch (e) {
+      console.error('Failed to add one-time meal', e);
+      addToast(t('oneTimeMeal.toastMealFailed'), 'error');
+    }
+  };
+
   const AddEaten = async (mealName: string) => {
     try {
       if (mealName === '') return;
@@ -898,6 +994,14 @@ export default function App({ onLogout }: { onLogout: () => void }) {
         onClose={toggleTab('appendFood')}
         cals={cals}
         onAddEaten={AddEaten}
+        onOpenOneTime={toggleTab('oneTimeMeal')}
+      />
+      <OneTimeMealModal
+        visible={visibleTabs['oneTimeMeal']}
+        onClose={toggleTab('oneTimeMeal')}
+        food={food}
+        onCreateIngredient={AddOneTimeIngredient}
+        onAdd={AddOneTimeMeal}
       />
       <AddFoodModal
         visible={visibleTabs['addFood']}

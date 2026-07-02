@@ -9,11 +9,13 @@ export default function AppendFoodModal({
   onClose,
   cals,
   onAddEaten,
+  onOpenOneTime,
 }: {
   visible: boolean;
   onClose: () => void;
   cals: CalEntry[];
   onAddEaten: (name: string) => void;
+  onOpenOneTime: () => void;
 }) {
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
@@ -28,13 +30,21 @@ export default function AppendFoodModal({
         <p className="text-3xl sm:text-4xl font-bold font-display text-ink">
           {t('appendFood.title')}
         </p>
-        <button
-          className="hover:bg-leaf-50 text-ink rounded-full p-2 transition-colors cursor-pointer"
-          onClick={onClose}
-          aria-label={t('common.close')}
-        >
-          <IoCloseOutline size={28} />
-        </button>
+        <div className="flex flex-row items-center gap-2">
+          <button
+            className="rounded-full bg-leaf-500 px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-white hover:bg-leaf-600 transition-colors active:scale-95 cursor-pointer"
+            onClick={onOpenOneTime}
+          >
+            {t('oneTimeMeal.openButton')}
+          </button>
+          <button
+            className="hover:bg-leaf-50 text-ink rounded-full p-2 transition-colors cursor-pointer"
+            onClick={onClose}
+            aria-label={t('common.close')}
+          >
+            <IoCloseOutline size={28} />
+          </button>
+        </div>
       </div>
       <div className="overflow-y-auto flex-1 p-3 sm:p-6 max-w-2xl mx-auto w-full">
         {alertMsg && (
@@ -51,7 +61,7 @@ export default function AppendFoodModal({
             .filter((item) => item.name.toLowerCase().includes(search.toLowerCase()))
             .map((f, i) => (
               <div
-                className="flex flex-row items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-white rounded-xl border border-line shadow-soft"
+                className="flex flex-row items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-surface rounded-xl border border-line shadow-soft"
                 key={i}
               >
                 <span className="flex-1 font-medium text-ink text-sm">{f.name}</span>

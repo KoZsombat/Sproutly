@@ -169,7 +169,7 @@ export default function History({
             {groupedEatenData.map((entry, index) => (
               <div
                 key={index}
-                className="bg-white rounded-2xl shadow-card border border-line p-5 sm:p-7 flex flex-col gap-2"
+                className="bg-surface rounded-2xl shadow-card border border-line p-5 sm:p-7 flex flex-col gap-2"
               >
                 <div className="flex flex-row items-center gap-2 mb-2">
                   <span className="num text-sm font-bold text-leaf-700 bg-leaf-50 border border-leaf-100 px-3 py-1 rounded-full uppercase tracking-wide">

@@ -67,7 +67,7 @@ export default function Index() {
         password: loginPass,
       };
       try {
-        const response = await fetch(`/auth/login`, {
+        const response = await fetch(`http://localhost:3000/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -214,7 +214,7 @@ export default function Index() {
               <p className="mt-1 text-sm text-muted">{t('login.tagline')}</p>
             </div>
 
-            <div className="w-full bg-white rounded-3xl shadow-float border border-line p-5 sm:p-6">
+            <div className="w-full bg-surface rounded-3xl shadow-float border border-line p-5 sm:p-6">
               <div className="flex justify-center gap-1.5 mb-5 rounded-full bg-cream p-1">
                 <button
                   className={`flex-1 rounded-full px-4 py-2 font-semibold transition-all cursor-pointer text-sm ${showLogin ? 'bg-leaf-500 text-white shadow-soft' : 'text-ink-2 hover:text-ink'}`}
@@ -253,7 +253,7 @@ export default function Index() {
                     {t('login.loginButton')}
                   </button>
                   <button
-                    className="w-full rounded-full border border-line bg-white py-3 font-semibold text-ink-2 hover:bg-leaf-50 transition-colors cursor-pointer"
+                    className="w-full rounded-full border border-line bg-surface py-3 font-semibold text-ink-2 hover:bg-leaf-50 transition-colors cursor-pointer"
                     onClick={() => (window.location.href = `/auth/google`)}
                   >
                     {t('login.googleLogin')}
@@ -289,7 +289,7 @@ export default function Index() {
                     {t('login.registerButton')}
                   </button>
                   <button
-                    className="w-full rounded-full border border-line bg-white py-3 font-semibold text-ink-2 hover:bg-leaf-50 transition-colors cursor-pointer"
+                    className="w-full rounded-full border border-line bg-surface py-3 font-semibold text-ink-2 hover:bg-leaf-50 transition-colors cursor-pointer"
                     onClick={() => (window.location.href = `/auth/google`)}
                   >
                     {t('login.googleLogin')}

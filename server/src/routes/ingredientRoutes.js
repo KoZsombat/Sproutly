@@ -28,19 +28,24 @@ router.post(
     }
 
     const user = req.username;
-    const { name, calories, protein, carbs, fat } = req.body;
+    const { name, calories, protein, carbs, fat, isOneTime } = req.body;
+    const oneTime = isOneTime ? 1 : 0;
 
     const sql =
-      'INSERT INTO food (username, name, calories, protein, carbs, fat) VALUES (?, ?, ?, ?, ?, ?)';
-    con.query(sql, [user, name, calories, protein, carbs, fat], (err) => {
-      if (err) {
-        console.error('Ingredient creation error');
-        return res
-          .status(500)
-          .json({ error: 'Could not add ingredient. Please try again later.' });
+      'INSERT INTO food (username, name, calories, protein, carbs, fat, is_one_time) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    con.query(
+      sql,
+      [user, name, calories, protein, carbs, fat, oneTime],
+      (err) => {
+        if (err) {
+          console.error('Ingredient creation error');
+          return res.status(500).json({
+            error: 'Could not add ingredient. Please try again later.',
+          });
+        }
+        return res.json({ success: true });
       }
-      return res.json({ success: true });
-    });
+    );
   }
 );
 

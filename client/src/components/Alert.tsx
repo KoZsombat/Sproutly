@@ -34,10 +34,10 @@ export default function Alert({
           label: t('common.success'),
         }
       : {
-          bg: 'bg-berry/10',
-          border: 'border-berry/40',
+          bg: 'bg-danger-bg',
+          border: 'border-danger-border',
           text: 'text-ink-2',
-          title: 'text-berry',
+          title: 'text-danger-fg',
           label: t('common.error'),
         };
 

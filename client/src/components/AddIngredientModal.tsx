@@ -389,22 +389,38 @@ export default function AddIngredientModal({
                       ...base,
                       borderRadius: '16px',
                       minHeight: '32px',
-                      borderColor: state.isFocused ? '#76d39d' : '#e3ebe5',
-                      boxShadow: state.isFocused ? '0 0 0 3px #76d39d' : 'none',
+                      backgroundColor: 'var(--color-surface)',
+                      borderColor: state.isFocused
+                        ? 'var(--color-leaf-300)'
+                        : 'var(--color-line)',
+                      boxShadow: state.isFocused
+                        ? '0 0 0 3px var(--color-leaf-300)'
+                        : 'none',
                       fontSize: '0.85rem',
                       padding: '0 2px',
-                      '&:hover': { borderColor: '#76d39d' },
+                      '&:hover': { borderColor: 'var(--color-leaf-300)' },
+                    }),
+                    singleValue: (base) => ({
+                      ...base,
+                      color: 'var(--color-ink)',
+                    }),
+                    input: (base) => ({
+                      ...base,
+                      color: 'var(--color-ink)',
                     }),
                     menu: (base) => ({
                       ...base,
                       borderRadius: '16px',
                       overflow: 'hidden',
                       zIndex: 50,
+                      backgroundColor: 'var(--color-surface)',
                     }),
                     option: (base, state) => ({
                       ...base,
-                      backgroundColor: state.isFocused ? '#ecfaf0' : 'white',
-                      color: '#0e1f17',
+                      backgroundColor: state.isFocused
+                        ? 'var(--color-leaf-50)'
+                        : 'var(--color-surface)',
+                      color: 'var(--color-ink)',
                       fontSize: '0.85rem',
                       padding: '8px 10px',
                     }),
@@ -522,7 +538,7 @@ export default function AddIngredientModal({
               }`}
             >
               <span
-                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+                className={`inline-block h-5 w-5 transform rounded-full bg-surface shadow transition-transform ${
                   displayAsMeal ? 'translate-x-6' : 'translate-x-1'
                 }`}
               />
@@ -539,7 +555,7 @@ export default function AddIngredientModal({
                   type="number"
                   inputMode="numeric"
                   min="1"
-                  className="field bg-white py-2 pl-3 pr-9 text-sm"
+                  className="field bg-surface py-2 pl-3 pr-9 text-sm"
                   value={mealGrams}
                   onChange={(e) => setMealGrams(e.target.value.replace(/[^0-9]/g, ''))}
                 />
@@ -583,7 +599,7 @@ export default function AddIngredientModal({
           </button>
           <button
             className={
-              `flex-1 rounded-full font-semibold transition-all cursor-pointer border border-line text-ink-2 bg-white hover:bg-leaf-50 ` +
+              `flex-1 rounded-full font-semibold transition-all cursor-pointer border border-line text-ink-2 bg-surface hover:bg-leaf-50 ` +
               (viewMode === 'database'
                 ? 'px-2 py-2 text-base md:text-xs md:min-w-[80px] md:max-w-[120px]'
                 : 'px-4 py-3 text-base')

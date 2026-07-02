@@ -29,7 +29,7 @@ export default function WaterIntake({ water = 0, goalLiters = 2, onChange }: Wat
   const progress = Math.min((liters / goalLitersSafe) * 100, 100);
 
   return (
-    <div className="bg-white p-4 shadow-card rounded-2xl border border-line h-full flex flex-col">
+    <div className="bg-surface p-4 shadow-card rounded-2xl border border-line h-full flex flex-col">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <div className="bg-sky/50 rounded-xl p-2">

@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-leaf-50: #ecfaf0;
   --color-leaf-100: #d4f3df;
@@ -20,10 +22,15 @@
   --color-paper: #fbfaf5;
   --color-cream: #f6f4ec;
   --color-cream-2: #efece0;
+  --color-surface: #ffffff;
 
   --color-sun: #ffcf5c;
   --color-berry: #ff7a59;
   --color-sky: #b9e3ff;
+
+  --color-danger-bg: #ffe9e3;
+  --color-danger-border: #ffc2b0;
+  --color-danger-fg: #b02e0c;
 
   --color-macro-protein: #ff9c78;
   --color-macro-carbs: #ffcf5c;
@@ -42,6 +49,30 @@
   --font-display: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* Dark theme: override neutral tokens and light-green tints.
+   Interactive greens (leaf-300/400/500/600) and accent colors stay vivid. */
+.dark {
+  --color-paper: #0f1512;
+  --color-surface: #1a201d;
+  --color-cream: #161b18;
+  --color-cream-2: #1f2622;
+
+  --color-ink: #e8efe9;
+  --color-ink-2: #c2cdc6;
+  --color-muted: #8b978f;
+  --color-line: #2c3531;
+
+  --color-leaf-50: #14251c;
+  --color-leaf-100: #1b3226;
+  --color-leaf-200: #24402f;
+  --color-leaf-700: #7fe0a6;
+  --color-leaf-800: #9be9ba;
+
+  --color-danger-bg: #3a1a12;
+  --color-danger-border: #6e2e1c;
+  --color-danger-fg: #ff9c78;
 }
 
 @layer base {

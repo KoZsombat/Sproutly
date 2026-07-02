@@ -21,7 +21,7 @@ export default function CreatineIntake({ done = false, onChange }: CreatineIntak
   };
 
   return (
-    <div className="bg-white p-4 shadow-card rounded-2xl border border-line h-full flex flex-col">
+    <div className="bg-surface p-4 shadow-card rounded-2xl border border-line h-full flex flex-col">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <div className="bg-leaf-50 rounded-xl p-2">

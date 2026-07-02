@@ -51,6 +51,10 @@ router.delete('/eaten/all', (req, res) => {
   const clearEatenSql = 'DELETE FROM eaten_meal WHERE username = ?';
   const clearWaterSql = 'DELETE FROM water_intake WHERE username = ?';
   const clearCreatineSql = 'DELETE FROM creatine_intake WHERE username = ?';
+  const clearOneTimeMealSql =
+    'DELETE FROM meal WHERE username = ? AND is_one_time = 1';
+  const clearOneTimeFoodSql =
+    'DELETE FROM food WHERE username = ? AND is_one_time = 1';
 
   con.query(clearEatenSql, [user], (eatenErr) => {
     if (eatenErr) {
@@ -76,7 +80,26 @@ router.delete('/eaten/all', (req, res) => {
           });
         }
 
-        return res.json({ success: true });
+        con.query(clearOneTimeMealSql, [user], (oneTimeMealErr) => {
+          if (oneTimeMealErr) {
+            console.error('Clear one-time meals error');
+            return res.status(500).json({
+              error: 'Could not clear one-time meals. Please try again later.',
+            });
+          }
+
+          con.query(clearOneTimeFoodSql, [user], (oneTimeFoodErr) => {
+            if (oneTimeFoodErr) {
+              console.error('Clear one-time ingredients error');
+              return res.status(500).json({
+                error:
+                  'Could not clear one-time ingredients. Please try again later.',
+              });
+            }
+
+            return res.json({ success: true });
+          });
+        });
       });
     });
   });

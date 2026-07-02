@@ -76,6 +76,34 @@ export const ensureRuntimeSchema = async () => {
       }
     }
 
+    const hasFoodTable = await tableExists(connection, 'food');
+    if (hasFoodTable) {
+      const hasFoodOneTime = await columnExists(
+        connection,
+        'food',
+        'is_one_time'
+      );
+      if (!hasFoodOneTime) {
+        await connection.query(
+          'ALTER TABLE food ADD COLUMN is_one_time TINYINT(1) NOT NULL DEFAULT 0'
+        );
+      }
+    }
+
+    const hasMealTable = await tableExists(connection, 'meal');
+    if (hasMealTable) {
+      const hasMealOneTime = await columnExists(
+        connection,
+        'meal',
+        'is_one_time'
+      );
+      if (!hasMealOneTime) {
+        await connection.query(
+          'ALTER TABLE meal ADD COLUMN is_one_time TINYINT(1) NOT NULL DEFAULT 0'
+        );
+      }
+    }
+
     const hasWaterTable = await tableExists(connection, 'water_intake');
     if (!hasWaterTable) {
       await connection.query(`

@@ -96,7 +96,7 @@ export default function AddFoodModal({
                 food.map((f) => (
                   <div
                     key={f.id}
-                    className="bg-white p-4 rounded-xl border border-line shadow-soft hover:border-leaf-200 transition-colors flex flex-col gap-3"
+                    className="bg-surface p-4 rounded-xl border border-line shadow-soft hover:border-leaf-200 transition-colors flex flex-col gap-3"
                   >
                     <span className="font-semibold text-ink text-lg">{f.name}</span>
                     <div className="flex gap-2">
@@ -127,7 +127,7 @@ export default function AddFoodModal({
                 cals.map((f) => (
                   <div
                     key={f.id}
-                    className="bg-white p-4 rounded-xl border border-line shadow-soft hover:border-leaf-200 transition-colors flex flex-col gap-3"
+                    className="bg-surface p-4 rounded-xl border border-line shadow-soft hover:border-leaf-200 transition-colors flex flex-col gap-3"
                   >
                     <span className="font-semibold text-ink text-lg">{f.name}</span>
                     <div className="flex gap-2">

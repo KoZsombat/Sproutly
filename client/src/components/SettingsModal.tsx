@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Select from 'react-select';
 import { COUNTRIES } from '../countries/COUNTRIES';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from '../context/ThemeContext';
 
 const countryOptions = [...COUNTRIES].map((c) => ({
   value: c,
@@ -45,6 +46,7 @@ export default function SettingsModal({
   }) => Promise<void> | void;
 }) {
   const { t } = useTranslation();
+  const { theme, setTheme } = useTheme();
   const [alertMsg, setAlertMsg] = useState<string | null>(null);
   const [alertType, setAlertType] = useState<'success' | 'error'>('error');
 
@@ -124,6 +126,37 @@ export default function SettingsModal({
           <Alert message={alertMsg} type={alertType} onClose={() => setAlertMsg(null)} />
         )}
         <div className="mb-4 sm:mb-8">
+          <h2 className="text-2xl font-semibold text-ink mb-2 sm:mb-4">
+            {t('settings.appearance')}
+          </h2>
+          <div className="pl-4 sm:pl-8">
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setTheme('light')}
+                className={`px-4 py-2 rounded-full border text-sm font-semibold cursor-pointer transition-colors ${
+                  theme === 'light'
+                    ? 'bg-leaf-500 text-white border-leaf-500'
+                    : 'bg-surface text-ink-2 border-line'
+                }`}
+              >
+                {t('settings.themeLight')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setTheme('dark')}
+                className={`px-4 py-2 rounded-full border text-sm font-semibold cursor-pointer transition-colors ${
+                  theme === 'dark'
+                    ? 'bg-leaf-500 text-white border-leaf-500'
+                    : 'bg-surface text-ink-2 border-line'
+                }`}
+              >
+                {t('settings.themeDark')}
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="mb-4 sm:mb-8">
           <div className="bg-leaf-50 w-full rounded-xl border border-leaf-100 px-3 py-2 mb-5">
             <h2 className="text-lg font-semibold text-leaf-800 mb-1">
               {t('settings.downloadTitle')}
@@ -172,22 +205,38 @@ export default function SettingsModal({
                       ...base,
                       borderRadius: '16px',
                       minHeight: '32px',
-                      borderColor: state.isFocused ? '#76d39d' : '#e3ebe5',
-                      boxShadow: state.isFocused ? '0 0 0 3px #76d39d' : 'none',
+                      backgroundColor: 'var(--color-surface)',
+                      borderColor: state.isFocused
+                        ? 'var(--color-leaf-300)'
+                        : 'var(--color-line)',
+                      boxShadow: state.isFocused
+                        ? '0 0 0 3px var(--color-leaf-300)'
+                        : 'none',
                       fontSize: '0.95rem',
                       padding: '0 2px',
-                      '&:hover': { borderColor: '#76d39d' },
+                      '&:hover': { borderColor: 'var(--color-leaf-300)' },
+                    }),
+                    singleValue: (base) => ({
+                      ...base,
+                      color: 'var(--color-ink)',
+                    }),
+                    input: (base) => ({
+                      ...base,
+                      color: 'var(--color-ink)',
                     }),
                     menu: (base) => ({
                       ...base,
                       borderRadius: '16px',
                       overflow: 'hidden',
                       zIndex: 50,
+                      backgroundColor: 'var(--color-surface)',
                     }),
                     option: (base, state) => ({
                       ...base,
-                      backgroundColor: state.isFocused ? '#ecfaf0' : 'white',
-                      color: '#0e1f17',
+                      backgroundColor: state.isFocused
+                        ? 'var(--color-leaf-50)'
+                        : 'var(--color-surface)',
+                      color: 'var(--color-ink)',
                       fontSize: '0.95rem',
                       padding: '8px 10px',
                     }),
@@ -268,7 +317,7 @@ export default function SettingsModal({
                   className={`px-4 py-2 rounded-full border text-sm font-semibold cursor-pointer transition-colors ${
                     localCreatineEnabled
                       ? 'bg-leaf-500 text-white border-leaf-500'
-                      : 'bg-white text-ink-2 border-line'
+                      : 'bg-surface text-ink-2 border-line'
                   }`}
                 >
                   {t('common.yes')}
@@ -279,7 +328,7 @@ export default function SettingsModal({
                   className={`px-4 py-2 rounded-full border text-sm font-semibold cursor-pointer transition-colors ${
                     !localCreatineEnabled
                       ? 'bg-leaf-500 text-white border-leaf-500'
-                      : 'bg-white text-ink-2 border-line'
+                      : 'bg-surface text-ink-2 border-line'
                   }`}
                 >
                   {t('common.no')}
@@ -317,7 +366,7 @@ export default function SettingsModal({
             {t('settings.update')}
           </button>
           <button
-            className="flex-1 px-4 py-3 rounded-full border border-line text-ink-2 font-semibold bg-white hover:bg-leaf-50 transition-all cursor-pointer"
+            className="flex-1 px-4 py-3 rounded-full border border-line text-ink-2 font-semibold bg-surface hover:bg-leaf-50 transition-all cursor-pointer"
             onClick={onClose}
           >
             {t('common.cancel')}

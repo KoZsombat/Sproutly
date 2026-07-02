@@ -5,6 +5,7 @@ import './i18n/i18n';
 import App from './pages/Login';
 import ErrorBoundary from './ErrorBoundary';
 import { ToastProvider } from './context/ToastContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { registerSW } from 'virtual:pwa-register';
 
 registerSW();
@@ -12,9 +13,11 @@ registerSW();
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary>
-      <ToastProvider>
-        <App />
-      </ToastProvider>
+      <ThemeProvider>
+        <ToastProvider>
+          <App />
+        </ToastProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   </StrictMode>
 );

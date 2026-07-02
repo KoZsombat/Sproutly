@@ -24,7 +24,7 @@ export default function TodaysCuisine({
   const { t } = useTranslation();
 
   return (
-    <section className="mx-4 my-3 sm:mx-6 flex flex-col min-h-[30vh] bg-white border border-line shadow-card rounded-2xl p-3 sm:p-4">
+    <section className="mx-4 my-3 sm:mx-6 flex flex-col min-h-[30vh] bg-surface border border-line shadow-card rounded-2xl p-3 sm:p-4">
       <div className="flex flex-row justify-between items-center mb-3">
         <h2 className="text-lg sm:text-xl font-bold text-ink">{t('todaysCuisine.title')}</h2>
         <div className="flex flex-row gap-2">

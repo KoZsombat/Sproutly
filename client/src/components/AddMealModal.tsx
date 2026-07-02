@@ -109,7 +109,7 @@ export default function AddMealModal({
               <div className="p-3 bg-cream rounded-xl border border-line">
                 <input
                   placeholder={t('meal.searchMeals')}
-                  className="field bg-white text-sm mb-2"
+                  className="field bg-surface text-sm mb-2"
                   value={duplicateSearch}
                   onChange={(e) => setDuplicateSearch(e.target.value)}
                 />
@@ -119,7 +119,7 @@ export default function AddMealModal({
                       <button
                         key={idx}
                         onClick={() => handleDuplicateMeal(meal)}
-                        className="w-full text-left px-3 py-2 rounded-lg text-sm text-ink-2 bg-white hover:bg-leaf-50 border border-line transition-all"
+                        className="w-full text-left px-3 py-2 rounded-lg text-sm text-ink-2 bg-surface hover:bg-leaf-50 border border-line transition-all"
                       >
                         {meal.name}
                       </button>
@@ -159,7 +159,7 @@ export default function AddMealModal({
               return (
                 <div
                   key={idx}
-                  className="flex flex-row items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-white rounded-xl border border-line shadow-soft"
+                  className="flex flex-row items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-surface rounded-xl border border-line shadow-soft"
                 >
                   <span className="flex-1 font-medium text-ink text-sm">{ingredient.name}</span>
                   <input
@@ -203,7 +203,7 @@ export default function AddMealModal({
             {editMode ? t('meal.saveChanges') : t('meal.createMeal')}
           </button>
           <button
-            className="flex-1 px-4 py-3 rounded-full border border-line text-ink-2 font-semibold bg-white hover:bg-leaf-50 transition-all cursor-pointer"
+            className="flex-1 px-4 py-3 rounded-full border border-line text-ink-2 font-semibold bg-surface hover:bg-leaf-50 transition-all cursor-pointer"
             onClick={onClose}
           >
             {t('common.cancel')}

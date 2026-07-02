@@ -7,7 +7,7 @@ export default function StreakDisplay({ streak }: { streak: number }) {
 
   return (
     <div className="w-full flex flex-col gap-3">
-      <div className="flex items-center justify-between bg-white border border-line p-5 rounded-2xl shadow-card">
+      <div className="flex items-center justify-between bg-surface border border-line p-5 rounded-2xl shadow-card">
         <div className="flex flex-col">
           <span className="num text-[11px] tracking-widest text-muted uppercase">
             {t('history.yourStreak')}

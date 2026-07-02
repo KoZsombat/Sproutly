@@ -17,10 +17,12 @@ router.post(
     }
 
     const user = req.username;
-    const { name, food } = req.body;
+    const { name, food, isOneTime } = req.body;
+    const oneTime = isOneTime ? 1 : 0;
 
-    const sqlMeal = 'INSERT INTO meal (username, name) VALUES (?, ?)';
-    con.query(sqlMeal, [user, name], (err, result) => {
+    const sqlMeal =
+      'INSERT INTO meal (username, name, is_one_time) VALUES (?, ?, ?)';
+    con.query(sqlMeal, [user, name, oneTime], (err, result) => {
       if (err) {
         console.error('Meal creation error');
         return res

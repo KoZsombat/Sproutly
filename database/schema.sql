@@ -58,10 +58,14 @@ CREATE TABLE IF NOT EXISTS food (
   protein  FLOAT        NOT NULL DEFAULT 0,
   carbs    FLOAT        NOT NULL DEFAULT 0,
   fat      FLOAT        NOT NULL DEFAULT 0,
+  is_one_time TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (id),
   CONSTRAINT fk_food_user FOREIGN KEY (username) REFERENCES user (username)
     ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+
+ALTER TABLE food
+  ADD COLUMN IF NOT EXISTS is_one_time TINYINT(1) NOT NULL DEFAULT 0;
 
 -- ---------------------------------------------------------------
 -- Named meals (collections of ingredients)
@@ -70,10 +74,14 @@ CREATE TABLE IF NOT EXISTS meal (
   id       INT          NOT NULL AUTO_INCREMENT,
   username VARCHAR(100) NOT NULL,
   name     VARCHAR(255) NOT NULL,
+  is_one_time TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (id),
   CONSTRAINT fk_meal_user FOREIGN KEY (username) REFERENCES user (username)
     ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+
+ALTER TABLE meal
+  ADD COLUMN IF NOT EXISTS is_one_time TINYINT(1) NOT NULL DEFAULT 0;
 
 -- ---------------------------------------------------------------
 -- Ingredients that belong to a meal (grams stored per ingredient)

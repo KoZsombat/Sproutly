@@ -1,30 +1,37 @@
-# Nutrition App
+# Sproutly — Nutrition App
 
 [![Frontend](https://img.shields.io/badge/frontend-React%2019%20%2B%20TypeScript-61dafb?style=flat-square)](client)
 [![Backend](https://img.shields.io/badge/backend-Express%205%20%2B%20MySQL-3c873a?style=flat-square)](server)
 [![Build](https://img.shields.io/badge/build-Vite%207-646cff?style=flat-square)](client)
 
-Full-stack nutrition tracking app for logging meals, managing macro targets, and adding foods manually or from a barcode-backed product lookup.
+Full-stack nutrition tracking app (branded **Sproutly** in the app UI) for logging meals, managing macro and hydration targets, tracking daily habits, and adding foods manually or from a barcode-backed product lookup.
 
 ## At a Glance
 
-| Area          | Details                                                            |
-| ------------- | ------------------------------------------------------------------ |
-| Frontend      | React 19, TypeScript, Vite, Tailwind CSS 4                         |
-| Backend       | Express 5, MySQL 8, JWT auth                                       |
-| Input methods | Manual ingredients, saved meals, barcode product lookup            |
-| User features | Macro targets, daily log, history snapshots, optional Google OAuth |
-| Delivery      | SPA frontend with PWA support                                      |
+| Area          | Details                                                                         |
+| ------------- | ------------------------------------------------------------------------------- |
+| Frontend      | React 19, TypeScript, Vite, Tailwind CSS 4, dark mode                           |
+| Backend       | Express 5, MySQL 8, JWT auth                                                     |
+| Input methods | Manual ingredients, saved meals, one-time items, barcode + OCR product lookup   |
+| User features | Macro & water targets, daily log, streaks, creatine tracking, history snapshots |
+| Auth          | JWT with optional Google OAuth                                                   |
+| Delivery      | SPA frontend with PWA support                                                    |
 
 ## Highlights
 
 - Daily calorie, protein, carb, and fat tracking
-- Custom ingredients and reusable meals
-- Logged meals for the current day with history snapshots
-- Barcode-based product lookup with Scanbot Web SDK
+- Water intake tracking against a per-user daily goal
+- Optional daily creatine tracking
+- Daily streak and "today's cuisine" widgets
+- Custom ingredients and reusable meals, plus one-time meals/ingredients for quick single-day logging
+- Logged meals for the current day with saved daily history snapshots
+- Barcode-based product lookup with Scanbot Web SDK, plus ZXing / Tesseract OCR number reading
+- Light and dark theme support
 - JWT authentication with optional Google OAuth login
 - Internationalization via i18next
 - PWA-enabled frontend build via Vite
+
+> Note: water intake, creatine status, and one-time meals/ingredients are cleared when the day is saved to history.
 
 ## Tech Stack
 
@@ -38,6 +45,9 @@ Full-stack nutrition tracking app for logging meals, managing macro targets, and
 | react-select               | express-validator                |
 | react-circular-progressbar |                                  |
 | Scanbot Web SDK            |                                  |
+| ZXing (@zxing/library)     |                                  |
+| Tesseract.js (OCR)         |                                  |
+| react-icons                |                                  |
 | vite-plugin-pwa            |                                  |
 
 ## Requirements
@@ -90,18 +100,24 @@ mysql -u root -p < database/schema.sql
 
 ### 4. Create environment files
 
+Copy the server example file, then create the client file manually (there is no client example).
+
 macOS/Linux:
 
 ```bash
 cp server/.env.example server/.env
-cp client/.env.example client/.env
 ```
 
 PowerShell:
 
 ```powershell
 Copy-Item server/.env.example server/.env
-Copy-Item client/.env.example client/.env
+```
+
+Then create `client/.env` with a single line:
+
+```bash
+VITE_API_URL=http://localhost:3000
 ```
 
 ### 5. Fill in the environment values
@@ -115,13 +131,14 @@ Server variables in `server/.env`:
 - `DBNAME`
 - `JWT_SECRET`
 - `SESSION_SECRET`
-- `FRONTEND_URL`
-- `PORT`
+- `FRONTEND_URL` — origin the client runs on; CORS is restricted to this value (Vite's dev server defaults to `http://localhost:5173`)
+- `BACKEND_URL` — base URL of the API, used to build the Google OAuth callback
+- `PORT` — backend port (defaults to `3000`)
 - `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` if Google login is enabled
 
 Client variables in `client/.env`:
 
-- `VITE_API_URL`, for example `http://localhost:3001`
+- `VITE_API_URL`, for example `http://localhost:3000`
 
 ### 6. Start the application
 
@@ -177,7 +194,7 @@ Output is generated in `client/dist`.
 
 ## Runtime Notes
 
-- The backend listens on `PORT`, defaulting to `3001`.
+- The backend listens on `PORT`, defaulting to `3000`.
 - The frontend expects the backend base URL from `VITE_API_URL`.
 - CORS is restricted to `FRONTEND_URL`.
 - Google OAuth is optional; leaving those credentials unset disables SSO in practice.
@@ -219,7 +236,10 @@ All `/api/*` routes require `Authorization: Bearer <token>`.
 | `DELETE` | `/api/meal`            | Delete a meal                              |
 | `POST`   | `/api/eaten`           | Log a meal as eaten                        |
 | `DELETE` | `/api/eaten`           | Delete a single eaten entry                |
-| `DELETE` | `/api/eaten/all`       | Clear today's eaten entries                |
+| `DELETE` | `/api/eaten/all`       | Clear the day: eaten entries, water, creatine, and one-time items |
+| `GET`    | `/api/tracking`        | Fetch today's water total and creatine status |
+| `PUT`    | `/api/tracking/water`  | Set today's water intake in liters         |
+| `PUT`    | `/api/tracking/creatine` | Set today's creatine done flag           |
 | `POST`   | `/api/history`         | Save a daily history snapshot              |
 | `GET`    | `/api/history`         | Fetch history snapshots                    |
 | `POST`   | `/api/product/search`  | Search the shared product database by name |
@@ -229,16 +249,18 @@ All `/api/*` routes require `Authorization: Bearer <token>`.
 
 The schema lives in `database/schema.sql` and creates these main tables:
 
-| Table           | Purpose                                 |
-| --------------- | --------------------------------------- |
-| `user`          | Local and Google-authenticated accounts |
-| `nut_values`    | Per-user calorie and macro targets      |
-| `food`          | User-defined ingredients                |
-| `meal`          | Saved meals                             |
-| `meal_food`     | Ingredient rows belonging to a meal     |
-| `eaten_meal`    | Meals logged for the current day        |
-| `eaten_history` | Saved daily nutrition history           |
-| `products`      | Shared barcode and product lookup data  |
+| Table             | Purpose                                                        |
+| ----------------- | -------------------------------------------------------------- |
+| `user`            | Local and Google-authenticated accounts                        |
+| `nut_values`      | Per-user calorie/macro targets, plus `water_goal` and `creatine_enabled` |
+| `food`            | User-defined ingredients (`is_one_time` flag for single-day items) |
+| `meal`            | Saved meals (`is_one_time` flag for single-day meals)          |
+| `meal_food`       | Ingredient rows belonging to a meal                            |
+| `eaten_meal`      | Meals logged for the current day                               |
+| `water_intake`    | Per-user water total for the current day                       |
+| `creatine_intake` | Per-user creatine done flag for the current day                |
+| `eaten_history`   | Saved daily nutrition history                                  |
+| `products`        | Shared barcode and product lookup data                         |
 
 The `products` table is created by the schema, but product data must be populated separately.
 
@@ -251,7 +273,7 @@ nutrition-app/
 │   │   └── wasm/               # Scanbot Web SDK assets
 │   ├── src/
 │   │   ├── components/         # UI components and modals
-│   │   ├── context/            # React context providers
+│   │   ├── context/            # React context providers (theme/dark mode, toasts)
 │   │   ├── countries/          # Country data for profile settings
 │   │   ├── i18n/               # i18n setup and locale files
 │   │   ├── pages/              # App and login pages

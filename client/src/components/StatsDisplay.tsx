@@ -98,19 +98,19 @@ export default function StatsDisplay({
       <div className="relative mt-5 grid grid-cols-3 gap-2">
         <MacroBar
           label={t('stats.protein')}
-          current={protein}
+          current={Math.round(protein)}
           max={proteinMax}
           color="var(--color-macro-protein)"
         />
         <MacroBar
           label={t('stats.carbs')}
-          current={carbs}
+          current={Math.round(carbs)}
           max={carbsMax}
           color="var(--color-macro-carbs)"
         />
         <MacroBar
           label={t('stats.fat')}
-          current={fat}
+          current={Math.round(fat)}
           max={fatMax}
           color="var(--color-macro-fat)"
         />

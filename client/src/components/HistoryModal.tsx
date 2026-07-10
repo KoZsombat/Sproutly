@@ -179,19 +179,25 @@ export default function History({
                 <div className="grid grid-cols-2 gap-3">
                   <div className="rounded-xl bg-cream px-3 py-2 flex flex-col items-center">
                     <span className="text-xs text-muted">{t('stats.calories')}</span>
-                    <span className="num font-bold text-ink text-lg">{entry.calories}</span>
+                    <span className="num font-bold text-ink text-lg">
+                      {Math.round(entry.calories)}
+                    </span>
                   </div>
                   <div className="rounded-xl bg-cream px-3 py-2 flex flex-col items-center">
                     <span className="text-xs text-muted">{t('stats.protein')}</span>
-                    <span className="num font-bold text-ink text-lg">{entry.protein}g</span>
+                    <span className="num font-bold text-ink text-lg">
+                      {Math.round(entry.protein)}g
+                    </span>
                   </div>
                   <div className="rounded-xl bg-cream px-3 py-2 flex flex-col items-center">
                     <span className="text-xs text-muted">{t('stats.carbs')}</span>
-                    <span className="num font-bold text-ink text-lg">{entry.carbs}g</span>
+                    <span className="num font-bold text-ink text-lg">
+                      {Math.round(entry.carbs)}g
+                    </span>
                   </div>
                   <div className="rounded-xl bg-cream px-3 py-2 flex flex-col items-center">
                     <span className="text-xs text-muted">{t('stats.fat')}</span>
-                    <span className="num font-bold text-ink text-lg">{entry.fat}g</span>
+                    <span className="num font-bold text-ink text-lg">{Math.round(entry.fat)}g</span>
                   </div>
                 </div>
               </div>

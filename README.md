@@ -4,300 +4,66 @@
 [![Backend](https://img.shields.io/badge/backend-Express%205%20%2B%20MySQL-3c873a?style=flat-square)](server)
 [![Build](https://img.shields.io/badge/build-Vite%207-646cff?style=flat-square)](client)
 
-Full-stack nutrition tracking app (branded **Sproutly** in the app UI) for logging meals, managing macro and hydration targets, tracking daily habits, and adding foods manually or from a barcode-backed product lookup.
+A full-stack nutrition tracker for logging meals, hitting your macro and water goals, and keeping a daily streak going. You can add foods by hand, save the meals you eat often, or just scan a barcode and let the app fill in the details.
 
-## At a Glance
+## What it does
 
-| Area          | Details                                                                         |
-| ------------- | ------------------------------------------------------------------------------- |
-| Frontend      | React 19, TypeScript, Vite, Tailwind CSS 4, dark mode                           |
-| Backend       | Express 5, MySQL 8, JWT auth                                                     |
-| Input methods | Manual ingredients, saved meals, one-time items, barcode + OCR product lookup   |
-| User features | Macro & water targets, daily log, streaks, creatine tracking, history snapshots |
-| Auth          | JWT with optional Google OAuth                                                   |
-| Delivery      | SPA frontend with PWA support                                                    |
+- Tracks calories, protein, carbs, and fat against targets you set yourself
+- Logs water and (optionally) creatine, with a daily streak to keep you honest
+- Scans barcodes to pull product info, with OCR as a fallback for reading numbers straight off packaging
+- Lets you save reusable meals and ingredients, or log one-off items for a single day
+- Signs you in with email/password or Google, both backed by JWT
+- Runs as a PWA with light/dark themes and multi-language support
 
-## Highlights
+When you save a day to history, water, creatine, and any one-time items reset for the next one.
 
-- Daily calorie, protein, carb, and fat tracking
-- Water intake tracking against a per-user daily goal
-- Optional daily creatine tracking
-- Daily streak and "today's cuisine" widgets
-- Custom ingredients and reusable meals, plus one-time meals/ingredients for quick single-day logging
-- Logged meals for the current day with saved daily history snapshots
-- Barcode-based product lookup with Scanbot Web SDK, plus ZXing / Tesseract OCR number reading
-- Light and dark theme support
-- JWT authentication with optional Google OAuth login
-- Internationalization via i18next
-- PWA-enabled frontend build via Vite
+## Running it locally
 
-> Note: water intake, creatine status, and one-time meals/ingredients are cleared when the day is saved to history.
-
-## Tech Stack
-
-| Frontend                   | Backend                          |
-| -------------------------- | -------------------------------- |
-| React 19                   | Express 5                        |
-| TypeScript 5               | MySQL 8 via mysql2               |
-| Vite 7                     | JWT + bcrypt                     |
-| Tailwind CSS 4             | Passport Google OAuth 2.0        |
-| react-i18next              | Helmet, CORS, express-rate-limit |
-| react-select               | express-validator                |
-| react-circular-progressbar |                                  |
-| Scanbot Web SDK            |                                  |
-| ZXing (@zxing/library)     |                                  |
-| Tesseract.js (OCR)         |                                  |
-| react-icons                |                                  |
-| vite-plugin-pwa            |                                  |
-
-## Requirements
-
-- Node.js 20.19+ or 22.12+
-- npm
-- MySQL 8+
-- Optional: Google OAuth credentials
-
-## Quick Start
+You'll need Node 20.19+ (or 22.12+) and MySQL 8.
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/KoZsombat/Sproutly
 cd nutrition-app
 
-cd client
-npm install
-cd ../server
-npm install
+# install both sides
+cd client && npm install
+cd ../server && npm install
 
+# set up the database
 cd ..
 mysql -u root -p < database/schema.sql
 ```
 
-Create your environment files, start the backend and frontend, then open `http://localhost:5173`.
-
-## Setup
-
-### 1. Clone the repository
-
-```bash
-git clone <repo-url>
-cd nutrition-app
-```
-
-### 2. Install dependencies
-
-```bash
-cd client
-npm install
-cd ../server
-npm install
-```
-
-### 3. Create the database schema
-
-```bash
-mysql -u root -p < database/schema.sql
-```
-
-### 4. Create environment files
-
-Copy the server example file, then create the client file manually (there is no client example).
-
-macOS/Linux:
+Next, set up your environment. Copy the server example and fill it in:
 
 ```bash
 cp server/.env.example server/.env
 ```
 
-PowerShell:
+The important ones are your MySQL connection (`DBHOST`, `DBUSER`, `DBPASSWORD`, `DBNAME`), a `JWT_SECRET` and `SESSION_SECRET`, and `FRONTEND_URL` / `BACKEND_URL`. Google login is optional — leave `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` blank to skip it.
 
-```powershell
-Copy-Item server/.env.example server/.env
-```
-
-Then create `client/.env` with a single line:
+Then create `client/.env` with one line pointing at the API:
 
 ```bash
 VITE_API_URL=http://localhost:3000
 ```
 
-### 5. Fill in the environment values
-
-Server variables in `server/.env`:
-
-- `DBHOST`
-- `DBPORT`
-- `DBUSER`
-- `DBPASSWORD`
-- `DBNAME`
-- `JWT_SECRET`
-- `SESSION_SECRET`
-- `FRONTEND_URL` — origin the client runs on; CORS is restricted to this value (Vite's dev server defaults to `http://localhost:5173`)
-- `BACKEND_URL` — base URL of the API, used to build the Google OAuth callback
-- `PORT` — backend port (defaults to `3000`)
-- `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` if Google login is enabled
-
-Client variables in `client/.env`:
-
-- `VITE_API_URL`, for example `http://localhost:3000`
-
-### 6. Start the application
-
-Backend:
+Start both and open the app:
 
 ```bash
-cd server
+# in server/
 npm start
-```
 
-Frontend:
-
-```bash
-cd client
+# in client/
 npm run dev
 ```
 
-### 7. Open the app
+The frontend runs at `http://localhost:5173`.
 
-`http://localhost:5173`
+## Under the hood
 
-## Scripts
-
-### Client
-
-| Command           | Description                                         |
-| ----------------- | --------------------------------------------------- |
-| `npm run dev`     | Start the Vite dev server                           |
-| `npm run build`   | Run TypeScript build and create a production bundle |
-| `npm run preview` | Preview the production build locally                |
-| `npm run lint`    | Run ESLint on `src/`                                |
-| `npm run format`  | Format frontend source files with Prettier          |
-
-### Server
-
-| Command          | Description                                   |
-| ---------------- | --------------------------------------------- |
-| `npm start`      | Start the Express server                      |
-| `npm run lint`   | Run ESLint with auto-fix                      |
-| `npm run format` | Format the server project with Prettier       |
-| `npm test`       | Placeholder script, currently not implemented |
-
-## Build
-
-Frontend production build:
-
-```bash
-cd client
-npm run build
-```
-
-Output is generated in `client/dist`.
-
-## Runtime Notes
-
-- The backend listens on `PORT`, defaulting to `3000`.
-- The frontend expects the backend base URL from `VITE_API_URL`.
-- CORS is restricted to `FRONTEND_URL`.
-- Google OAuth is optional; leaving those credentials unset disables SSO in practice.
-
-## Health Check
-
-| Endpoint      | Response             |
-| ------------- | -------------------- |
-| `GET /health` | `{ "status": "ok" }` |
-
-## API Overview
-
-All `/api/*` routes require `Authorization: Bearer <token>`.
-
-### Auth Routes
-
-| Method | Path                    | Auth | Description                                                     |
-| ------ | ----------------------- | ---- | --------------------------------------------------------------- |
-| `POST` | `/auth/register`        | No   | Register a new user with username, email, and password          |
-| `POST` | `/auth/login`           | No   | Log in with username and password                               |
-| `POST` | `/auth/verifyToken`     | Yes  | Validate a token and return the authenticated user              |
-| `POST` | `/auth/userInDb`        | Yes  | Check whether the token owner still exists                      |
-| `GET`  | `/auth/google`          | No   | Start the Google OAuth flow                                     |
-| `GET`  | `/auth/google/callback` | No   | OAuth callback that redirects back to the frontend with a token |
-| `GET`  | `/auth/logout`          | No   | Log out the Passport session and redirect to the frontend       |
-
-### Protected Routes
-
-| Method   | Path                   | Description                                |
-| -------- | ---------------------- | ------------------------------------------ |
-| `GET`    | `/api/data`            | Fetch profile data and macro targets       |
-| `PUT`    | `/api/data`            | Update profile data and macro targets      |
-| `GET`    | `/api/food`            | Fetch ingredients, meals, and eaten items  |
-| `POST`   | `/api/ingredient`      | Create an ingredient                       |
-| `PUT`    | `/api/ingredient`      | Update an ingredient                       |
-| `DELETE` | `/api/ingredient`      | Delete an ingredient                       |
-| `POST`   | `/api/meal`            | Create a meal                              |
-| `PUT`    | `/api/meal`            | Update a meal                              |
-| `DELETE` | `/api/meal`            | Delete a meal                              |
-| `POST`   | `/api/eaten`           | Log a meal as eaten                        |
-| `DELETE` | `/api/eaten`           | Delete a single eaten entry                |
-| `DELETE` | `/api/eaten/all`       | Clear the day: eaten entries, water, creatine, and one-time items |
-| `GET`    | `/api/tracking`        | Fetch today's water total and creatine status |
-| `PUT`    | `/api/tracking/water`  | Set today's water intake in liters         |
-| `PUT`    | `/api/tracking/creatine` | Set today's creatine done flag           |
-| `POST`   | `/api/history`         | Save a daily history snapshot              |
-| `GET`    | `/api/history`         | Fetch history snapshots                    |
-| `POST`   | `/api/product/search`  | Search the shared product database by name |
-| `POST`   | `/api/product/barcode` | Look up a product by barcode               |
-
-## Database
-
-The schema lives in `database/schema.sql` and creates these main tables:
-
-| Table             | Purpose                                                        |
-| ----------------- | -------------------------------------------------------------- |
-| `user`            | Local and Google-authenticated accounts                        |
-| `nut_values`      | Per-user calorie/macro targets, plus `water_goal` and `creatine_enabled` |
-| `food`            | User-defined ingredients (`is_one_time` flag for single-day items) |
-| `meal`            | Saved meals (`is_one_time` flag for single-day meals)          |
-| `meal_food`       | Ingredient rows belonging to a meal                            |
-| `eaten_meal`      | Meals logged for the current day                               |
-| `water_intake`    | Per-user water total for the current day                       |
-| `creatine_intake` | Per-user creatine done flag for the current day                |
-| `eaten_history`   | Saved daily nutrition history                                  |
-| `products`        | Shared barcode and product lookup data                         |
-
-The `products` table is created by the schema, but product data must be populated separately.
-
-## Project Structure
-
-```text
-nutrition-app/
-├── client/
-│   ├── public/
-│   │   └── wasm/               # Scanbot Web SDK assets
-│   ├── src/
-│   │   ├── components/         # UI components and modals
-│   │   ├── context/            # React context providers (theme/dark mode, toasts)
-│   │   ├── countries/          # Country data for profile settings
-│   │   ├── i18n/               # i18n setup and locale files
-│   │   ├── pages/              # App and login pages
-│   │   └── types/              # Shared frontend types
-│   └── vite.config.ts          # Vite + PWA configuration
-├── database/
-│   └── schema.sql              # MySQL schema
-├── server/
-│   ├── src/
-│   │   ├── config/             # Runtime config and rate limiters
-│   │   ├── middleware/         # Token verification and error helpers
-│   │   ├── routes/             # Express route modules
-│   │   ├── auth.js             # Auth router and Passport setup
-│   │   ├── db.js               # MySQL connection setup
-│   │   └── routes.js           # Protected API router aggregation
-│   └── app.js                  # Express entry point
-└── README.md
-```
-
-## Notes
-
-- The frontend currently ships with an English locale file in `client/src/i18n/locales/en.json`.
-- There is no real automated test suite configured yet.
+React 19 + TypeScript on the front, Express 5 + MySQL on the back. Barcode scanning uses the Scanbot Web SDK with ZXing and Tesseract.js for OCR, auth is JWT with optional Google OAuth via Passport, and the build is Vite with PWA support. The API and database schema live in `server/src/routes` and `database/schema.sql` if you want to dig in.
 
 ## License
 
-Provided as-is for portfolio and learning purposes.
+Built as a portfolio project, provided as-is.
